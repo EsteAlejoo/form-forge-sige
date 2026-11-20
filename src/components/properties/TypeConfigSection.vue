@@ -12,6 +12,8 @@ import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
+
+import AppearancePicker from '@/sige/AppearancePicker.vue'
 import { computed, ref } from 'vue'
 
 import GuideTrigger from '@/components/help/GuideTrigger.vue'
@@ -153,8 +155,17 @@ const uploadFile = async (event: Event): Promise<void> => {
 
 <template>
   <section v-if="def && hasTypeConfig(def)" class="prop-section">
+    <!-- SIGE: lista de radios con etiqueta; las flechas ↑ ↓ aplican al instante y la vista previa se ve cambiar. -->
+    <AppearancePicker
+      v-if="(def.appearances?.length ?? 0) > 0"
+      :def="def"
+      :node-id="node.id"
+      :model-value="node.body.appearance"
+      @update:model-value="setAppearance($event ?? null)"
+    />
+
     <label v-if="(def.appearances?.length ?? 0) > 0" class="prop-field">
-      <span>{{ t('properties.typeConfig.appearance') }}<HelpPopover field="appearance" /></span>
+      <span>{{ t('properties.typeConfig.appearance') }} (texto libre)<HelpPopover field="appearance" /></span>
       <Select
         :model-value="node.body.appearance ?? null"
         :options="appearanceOptions"

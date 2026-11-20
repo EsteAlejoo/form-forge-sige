@@ -63,20 +63,53 @@ const destroyFailedApp = (app: App, container: HTMLElement): void => {
   if (childApp === app) childApp = null
 }
 
+/** SIGE: versión nueva armada en un contenedor oculto mientras la anterior sigue visible. */
+let pending: { app: App, container: HTMLElement } | null = null
+const discardPending = (): void => {
+  if (pending === null) return
+  try { pending.app.unmount() } catch { /* aún montando */ }
+  pending.container.remove()
+  pending = null
+}
+
 const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   const myGeneration = ++generation
-  loading.value = true
+  // SIGE: doble búfer. Si ya hay un formulario dibujado, el nuevo se arma oculto y se
+  // intercambia al estar listo: sin pantalla de carga, sin vaciar el lienzo y sin que
+  // el desplazamiento salte al inicio.
+  const hadContent = childApp !== null && mountEl.value?.firstElementChild != null
+  loading.value = !hadContent
   void warmUpGeolocation(xml)
   const { OdkWebForm, webFormsPlugin } = await loadWebForms()
   if (myGeneration !== generation || mountEl.value === null) return
 
-  destroyChild()
+  discardPending()
+  const previousApp = childApp
+  const previousContainer = mountEl.value.firstElementChild as HTMLElement | null
+  if (!hadContent) destroyChild()
   const container = document.createElement('div')
+  if (hadContent) container.style.cssText = 'position:absolute;inset-inline:0;top:0;visibility:hidden;pointer-events:none'
   mountEl.value.appendChild(container)
 
   const fetchFormAttachment = makeFetchFormAttachment(props.formRecordId)
   const { createApp } = await import('vue')
-  if (myGeneration !== generation) return
+  if (myGeneration !== generation) { container.remove(); return }
+
+  let swapped = !hadContent
+  const swapIn = (app: App): void => {
+    if (swapped) return
+    swapped = true
+    const top = hostEl.value?.scrollTop ?? 0
+    stopFailureWatch?.()
+    stopFailureWatch = null
+    try { previousApp?.unmount() } catch { /* ya desmontada */ }
+    previousContainer?.remove()
+    container.style.cssText = ''
+    childApp = app
+    pending = null
+    if (hostEl.value !== null) hostEl.value.scrollTop = top
+    watchForLoadFailure(myGeneration, reportError)
+  }
 
   const app = createApp({
     render: () => h(OdkWebForm, {
@@ -92,7 +125,9 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
         void nextTick(() => {
           if (myGeneration !== generation) return
           requestAnimationFrame(() => {
-            if (myGeneration === generation) emit('loaded')
+            if (myGeneration !== generation) return
+            swapIn(app)
+            emit('loaded')
           })
         })
       },
@@ -103,6 +138,7 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   let failed = false
   const reportError = (error: unknown): void => {
     destroyFailedApp(app, container)
+    if (pending !== null && pending.app === app) pending = null
     if (failed || myGeneration !== generation) return
     failed = true
     const message = error instanceof Error ? error.message : String(error)
@@ -114,9 +150,10 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   try {
     app.mount(container)
     if (!failed) {
-      childApp = app
+      if (hadContent) pending = { app, container }
+      else childApp = app
       if (!isRevert) lastGoodXml = xml
-      watchForLoadFailure(myGeneration, reportError)
+      if (!hadContent) watchForLoadFailure(myGeneration, reportError)
     }
   } catch (error) {
     reportError(error)
