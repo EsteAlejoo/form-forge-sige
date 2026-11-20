@@ -79,6 +79,17 @@ const railed = computed(() => mode.value !== 'tablet' && editor.selectedNodeId =
 const sigeLeft = computed(() => mode.value === 'wide' || mode.value === 'laptop')
 const paletteWidthPx = computed(() => (sigeLeft.value ? Math.max(ui.paletteWidth, 340) : ui.paletteWidth))
 
+/** SIGE: ir viendo cómo queda — la vista previa se abre sola (en formato celular la primera vez). */
+watch(() => form.recordId, () => {
+  if (sigeLeft.value) editor.previewVisible = true
+}, { immediate: true, flush: 'post' })
+try {
+  if (localStorage.getItem('sige.preview.init') === null) {
+    ui.previewPreset = 'phone'
+    localStorage.setItem('sige.preview.init', '1')
+  }
+} catch { /* sin almacenamiento */ }
+
 /**
  * Non-destructive palette auto-tuck (wide mode): when the docked panels
  * wouldn't leave the canvas its minimum width, the palette hides without
