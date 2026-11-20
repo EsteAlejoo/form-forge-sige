@@ -12,6 +12,8 @@ import GuideCallout from '@/components/help/GuideCallout.vue'
 import GuideTrigger from '@/components/help/GuideTrigger.vue'
 import ExportMenu from '@/components/importexport/ExportMenu.vue'
 import QuestionPalette from '@/components/palette/QuestionPalette.vue'
+import { applyVariantPreset } from '@/sige/applyVariant'
+import type { Variant } from '@/sige/palette/variants'
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
 import AppHeader from '@/components/shell/AppHeader.vue'
@@ -153,6 +155,17 @@ const addFromPalette = (type: string): void => {
     editor.select(id)
     editor.revealNodeId = id
   }
+  if (overlayPalette.value) editor.paletteDrawerOpen = false
+}
+
+/** SigeApp: variante de la paleta por categorías (tipo + preajuste). */
+const addVariantFromPalette = (variant: Variant): void => {
+  const target = selection.insertionTarget()
+  const id = form.addNode(variant.type, target.parentId, target.index)
+  if (id === null) return
+  applyVariantPreset(form.updateNode, id, variant.preset)
+  editor.select(id)
+  editor.revealNodeId = id
   if (overlayPalette.value) editor.paletteDrawerOpen = false
 }
 
@@ -365,13 +378,13 @@ const goToCentralSettings = async (): Promise<void> => {
         </Transition>
         <Transition name="drawer-start">
           <div v-if="editor.paletteDrawerOpen" class="palette-drawer">
-            <QuestionPalette @add="addFromPalette" />
+            <QuestionPalette @add="addFromPalette" @add-variant="addVariantFromPalette" />
           </div>
         </Transition>
       </template>
 
       <template v-if="effectivePaletteVisible">
-        <QuestionPalette @add="addFromPalette" />
+        <QuestionPalette @add="addFromPalette" @add-variant="addVariantFromPalette" />
         <SplitHandle panel="palette" side="start" />
       </template>
 
