@@ -13,6 +13,7 @@ import GuideTrigger from '@/components/help/GuideTrigger.vue'
 import ExportMenu from '@/components/importexport/ExportMenu.vue'
 import QuestionPalette from '@/components/palette/QuestionPalette.vue'
 import { applyVariantPreset } from '@/sige/applyVariant'
+import SigeLeftPanel from '@/sige/SigeLeftPanel.vue'
 import type { Variant } from '@/sige/palette/variants'
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
@@ -74,6 +75,10 @@ const overlayPalette = computed(() => mode.value === 'laptop' || mode.value === 
 /** The properties panel folds to a slim rail while nothing is selected. */
 const railed = computed(() => mode.value !== 'tablet' && editor.selectedNodeId === null)
 
+/** SIGE: en modo ancho, un solo panel izquierdo (Elementos / Ajustes) estilo Elementor. */
+const sigeLeft = computed(() => mode.value === 'wide')
+const paletteWidthPx = computed(() => (sigeLeft.value ? Math.max(ui.paletteWidth, 340) : ui.paletteWidth))
+
 /**
  * Non-destructive palette auto-tuck (wide mode): when the docked panels
  * wouldn't leave the canvas its minimum width, the palette hides without
@@ -90,7 +95,7 @@ const fitsWithPalette = computed(() => {
   return viewportWidth.value - ui.paletteWidth - HANDLE_PX - properties - preview >= CANVAS_MIN_PX
 })
 const effectivePaletteVisible = computed(() =>
-  mode.value === 'wide' && ui.paletteVisible && fitsWithPalette.value)
+  mode.value === 'wide' && (sigeLeft.value || (ui.paletteVisible && fitsWithPalette.value)))
 
 /**
  * Rendered panel widths, clamped so the canvas always keeps its minimum:
@@ -101,12 +106,12 @@ const effectivePaletteVisible = computed(() =>
 const effectivePanelWidths = computed(() => {
   const laptop = mode.value === 'laptop'
   const previewMin = laptop ? LAPTOP_PREVIEW_MIN_PX : PANEL_LIMITS.preview.min
-  let properties = railed.value
+  let properties = sigeLeft.value ? 0 : railed.value
     ? RAIL_PX
     : Math.min(ui.propertiesWidth, laptop ? LAPTOP_PROPERTIES_MAX_PX : Number.MAX_SAFE_INTEGER)
   let preview = editor.previewVisible ? ui.previewWidth : 0
-  const palette = effectivePaletteVisible.value ? ui.paletteWidth + HANDLE_PX : 0
-  const handles = HANDLE_PX * ((railed.value ? 0 : 1) + (editor.previewVisible ? 1 : 0))
+  const palette = effectivePaletteVisible.value ? paletteWidthPx.value + HANDLE_PX : 0
+  const handles = HANDLE_PX * ((sigeLeft.value || railed.value ? 0 : 1) + (editor.previewVisible ? 1 : 0))
   const available = viewportWidth.value - palette - handles - CANVAS_MIN_PX
   let overflow = properties + preview - available
   if (overflow > 0 && editor.previewVisible) {
@@ -129,15 +134,17 @@ const gridColumns = computed(() => {
   const cols: string[] = []
   if (effectivePaletteVisible.value) cols.push('var(--builder-palette-width)', 'var(--builder-split-handle-size)')
   cols.push('minmax(var(--builder-canvas-min-width), 1fr)')
-  cols.push(railed.value ? '0px' : 'var(--builder-split-handle-size)')
-  cols.push(railed.value ? 'var(--builder-properties-rail-width)' : 'var(--builder-properties-width)')
+  if (!sigeLeft.value) {
+    cols.push(railed.value ? '0px' : 'var(--builder-split-handle-size)')
+    cols.push(railed.value ? 'var(--builder-properties-rail-width)' : 'var(--builder-properties-width)')
+  }
   if (editor.previewVisible) cols.push('var(--builder-split-handle-size)', 'var(--builder-preview-width)')
   return cols.join(' ')
 })
 
 const editorBodyStyle = computed(() => ({
   'grid-template-columns': gridColumns.value,
-  '--builder-palette-width': `${ui.paletteWidth}px`,
+  '--builder-palette-width': `${paletteWidthPx.value}px`,
   '--builder-properties-width': `${effectivePanelWidths.value.properties}px`,
   '--builder-preview-width': `${effectivePanelWidths.value.preview}px`,
 }))
@@ -384,7 +391,8 @@ const goToCentralSettings = async (): Promise<void> => {
       </template>
 
       <template v-if="effectivePaletteVisible">
-        <QuestionPalette @add="addFromPalette" @add-variant="addVariantFromPalette" />
+        <SigeLeftPanel v-if="sigeLeft" @add="addFromPalette" @add-variant="addVariantFromPalette" />
+        <QuestionPalette v-else @add="addFromPalette" @add-variant="addVariantFromPalette" />
         <SplitHandle panel="palette" side="start" />
       </template>
 
@@ -410,8 +418,8 @@ const goToCentralSettings = async (): Promise<void> => {
       </section>
 
       <template v-if="mode !== 'tablet'">
-        <SplitHandle panel="properties" side="end" :disabled="railed" />
-        <PropertyPanel :railed="railed" />
+        <SplitHandle v-if="!sigeLeft" panel="properties" side="end" :disabled="railed" />
+        <PropertyPanel v-if="!sigeLeft" :railed="railed" />
         <template v-if="editor.previewVisible">
           <SplitHandle panel="preview" side="end" />
           <PreviewPanel />
