@@ -22,6 +22,7 @@ import { formatVersion, languageCodes } from '@/core/model/library-display'
 import { useAppI18n } from '@/i18n'
 import type { FormRecord, TemplateRecord } from '@/persistence/db'
 import * as templatesRepo from '@/persistence/templates-repo'
+import EjemplosAgricolas from '@/sige/ejemplos/EjemplosAgricolas.vue'
 import { useCentralStore } from '@/stores/central'
 import { useEditorStore } from '@/stores/editor'
 import { useEmbedStore } from '@/stores/embed'
@@ -306,6 +307,7 @@ const languageBadge = (record: FormRecord): string =>
     </header>
 
     <main class="library-main">
+      <EjemplosAgricolas v-if="!embed.active" />
       <div v-if="workspace.loading" class="library-empty">
         <ProgressSpinner style="width: 40px; height: 40px" />
       </div>

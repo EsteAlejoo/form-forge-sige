@@ -45,7 +45,7 @@ export const ACCENTS: readonly AccentDef[] = [
 ]
 
 export const ACCENT_IDS: readonly AccentId[] = ACCENTS.map((a) => a.id)
-export const DEFAULT_ACCENT: AccentId = 'purple'
+export const DEFAULT_ACCENT: AccentId = 'rose' // SIGE: rosa estilo Elementor
 
 export const isThemeScheme = (value: unknown): value is ThemeScheme =>
   typeof value === 'string' && (THEME_SCHEMES as readonly string[]).includes(value)

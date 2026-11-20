@@ -70,13 +70,13 @@ const LAPTOP_PROPERTIES_MAX_PX = 340
 const LAPTOP_PREVIEW_MIN_PX = 320
 
 /** Laptop and tablet render the palette as a slide-over drawer, not a column. */
-const overlayPalette = computed(() => mode.value === 'laptop' || mode.value === 'tablet')
+const overlayPalette = computed(() => mode.value === 'tablet' || (mode.value === 'laptop' && !sigeLeft.value))
 
 /** The properties panel folds to a slim rail while nothing is selected. */
 const railed = computed(() => mode.value !== 'tablet' && editor.selectedNodeId === null)
 
 /** SIGE: en modo ancho, un solo panel izquierdo (Elementos / Ajustes) estilo Elementor. */
-const sigeLeft = computed(() => mode.value === 'wide')
+const sigeLeft = computed(() => mode.value === 'wide' || mode.value === 'laptop')
 const paletteWidthPx = computed(() => (sigeLeft.value ? Math.max(ui.paletteWidth, 340) : ui.paletteWidth))
 
 /**
@@ -95,7 +95,7 @@ const fitsWithPalette = computed(() => {
   return viewportWidth.value - ui.paletteWidth - HANDLE_PX - properties - preview >= CANVAS_MIN_PX
 })
 const effectivePaletteVisible = computed(() =>
-  mode.value === 'wide' && (sigeLeft.value || (ui.paletteVisible && fitsWithPalette.value)))
+  (mode.value === 'wide' || mode.value === 'laptop') && (sigeLeft.value || (ui.paletteVisible && fitsWithPalette.value)))
 
 /**
  * Rendered panel widths, clamped so the canvas always keeps its minimum:

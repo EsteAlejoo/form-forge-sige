@@ -89,12 +89,12 @@ const variants = computed(() => (open.value === null ? [] : variantsOf(open.valu
 .cp-cats, .cp-variants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .cp-cat, .cp-variant {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 10px 6px; border: 1px solid var(--odk-border-color, #d5dbe3);
-  border-radius: 10px; background: var(--odk-muted-background-color, transparent);
+  padding: 16px 6px; border: 1px solid var(--odk-border-color, #d5dbe3);
+  border-radius: 4px; background: var(--odk-muted-background-color, transparent);
   color: var(--odk-text-color); font-family: inherit; cursor: pointer; text-align: center;
 }
 .cp-cat:hover, .cp-variant:hover { border-color: var(--odk-primary-color); background: var(--odk-primary-lighter-background-color); }
-.cp-cat i { font-size: 1.4rem; }
+.cp-cat i { font-size: 1.9rem; color: var(--odk-primary-color); margin-bottom: 4px; }
 .cp-cat-title { font-weight: 600; font-size: var(--odk-hint-font-size); }
 .cp-cat-desc, .cp-var-desc { font-size: 0.7rem; color: var(--odk-muted-text-color); }
 .cp-var-title { font-weight: 600; font-size: 0.78rem; }

@@ -25,6 +25,13 @@ watch(() => editor.selectedNodeId, (id) => {
 
 <template>
   <div class="sige-left" data-testid="sige-left-panel">
+    <div class="sige-left-head">
+      <i class="pi pi-bars" aria-hidden="true" />
+      <strong>ElMemento Kobo</strong>
+      <button class="sige-grid" title="Elementos" aria-label="Elementos" @click="tab = 'add'">
+        <i class="pi pi-th-large" />
+      </button>
+    </div>
     <div class="sige-left-tabs" role="tablist">
       <button
         role="tab"
@@ -65,7 +72,34 @@ watch(() => editor.selectedNodeId, (id) => {
   border-inline-end: var(--builder-panel-border);
 }
 
+.sige-left-head {
+  display: flex;
+  align-items: center;
+  gap: var(--odk-spacing-m);
+  padding: var(--odk-spacing-m) var(--odk-spacing-l);
+  background: var(--odk-primary-color);
+  color: var(--odk-primary-contrast-color, #fff);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.sige-left-head strong { flex: 1; font-weight: 600; }
+
+.sige-grid {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.05rem;
+  opacity: 0.9;
+}
+
+.sige-grid:hover { opacity: 1; }
+
 .sige-left-tabs {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   display: flex;
   border-bottom: var(--builder-panel-border);
 }
