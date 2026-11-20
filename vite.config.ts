@@ -29,8 +29,8 @@ export default defineConfig({
         navigateFallback: 'index.html',
       },
       manifest: {
-        name: 'Elemento Kobo',
-        short_name: 'Elemento Kobo',
+        name: 'ElMemento Kobo',
+        short_name: 'ElMemento Kobo',
         description: pkg.description,
         display: 'standalone',
         theme_color: '#6366f1',
