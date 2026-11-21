@@ -47,3 +47,15 @@ hoja de atajos (Ctrl+?) y buscador Ctrl+K · indicador del punto de soltado al a
 historial como lista con Restaurar (sobre `snapshots`) · pegar solo los ajustes (Ctrl+Shift+V) · menú `@` para recordar respuestas en etiquetas (verificar valor alternativo en Kobo).
 **Ola 3 (M):** bloque insertable de conteo NA0-NA4 + flujo por plaga (guardar selección como bloque en templates-repo) · reglas de destino al arrastrar (canMoveIn).
 **Descartado:** arrastrar elementos nuevos al celular (lo dibuja el motor ODK, costo L), widgets globales, versiones/notas compartidas (requieren tablas o servicio).
+
+## Registro de procedencia (qué se usó de otros repos)
+Regla (2026-11-21): basarse en open source y anotar aquí TODO lo tomado: código, patrón o idea, con licencia. Sin dependencias nuevas por defecto.
+| Origen | Licencia | Qué se usó | Dónde |
+|---|---|---|---|
+| Form Forge for ODK (punkch/form-forge) | MIT | Todo el fork: editor, motor XLSForm, vista previa | repo completo (LICENSE y NOTICE.md intactos) |
+| @getodk/web-forms (ODK) | Apache-2.0 | Motor oficial de la vista previa del celular | dependencia original |
+| PrimeVue, Pinia, Vue, SortableJS (vue-draggable-plus) | MIT | Interfaz, estado, arrastrar y soltar | dependencias originales |
+| Documentación de ODK | CC BY 4.0 | Ayuda en la app (crédito en el cajón de ayuda y Ajustes → Acerca de) | NOTICE.md |
+| Elementor (elementor/elementor) | GPL-3.0 | SOLO IDEAS de organización (panel por pestañas, menú contextual, buscador); ningún código copiado | src/sige/ (propio) |
+| Informes de investigación 2026-11-21 | — | Ideas de SurveyJS, Craft.js, Formbricks, GrapesJS, AppSheet, Glide, etc.: solo ideas, fuentes en `C:\sigeapp\kobo\investigacion_*.md` | plan de funciones (sin código aún) |
+Pendiente: al construir una función inspirada en un proyecto concreto, agregar su fila aquí en el mismo commit.
