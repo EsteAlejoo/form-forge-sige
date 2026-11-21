@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Select from 'primevue/select'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import BasicSection from '@/components/properties/BasicSection.vue'
 import ChoicesSection from '@/components/properties/ChoicesSection.vue'
@@ -12,6 +12,7 @@ import { useEditingLanguage } from '@/composables/useEditingLanguage'
 import { useTypeLabels } from '@/composables/useTypeLabels'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
+import { propertyTabRequest } from '@/sige/commands/bridge' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 
@@ -40,6 +41,8 @@ const setTab = (t: PTab): void => {
   ptab.value = t
   try { localStorage.setItem(PTAB_KEY, t) } catch { /* sin almacenamiento */ }
 }
+// SIGE: la lupita (Ctrl+K) pide abrir una pestaña concreta.
+watch(propertyTabRequest, (req) => { if (req !== null) setTab(req.tab) })
 const PTABS: Array<{ id: PTab, label: string, icon: string }> = [
   { id: 'content', label: 'Contenido', icon: 'pi pi-pencil' },
   { id: 'rules', label: 'Datos y reglas', icon: 'pi pi-link' },

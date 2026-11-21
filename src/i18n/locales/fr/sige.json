@@ -14,5 +14,69 @@
     "paste": "Coller",
     "shortcutDelete": "Suppr",
     "undoChangeType": "Changer le type de la question"
+  },
+  "sigePalette": {
+    "ariaLabel": "Rechercher des fonctions",
+    "placeholder": "Rechercher une fonction ou une question…  (> actions, {'@'} questions)",
+    "openButton": "Rechercher des fonctions ({mod}+K)",
+    "openLabel": "Rechercher des fonctions",
+    "empty": "Aucun résultat. Essayez un autre mot.",
+    "hint": "↑↓ naviguer · Entrée exécuter · Échap fermer · > actions · {'@'} questions",
+    "recent": "Utilisé récemment",
+    "error": "Cette fonction a échoué",
+    "addQuestion": "Ajouter une question : {name}",
+    "helpType": "Aide : {name}",
+    "helpGuide": "Guide d’aide : {name}",
+    "cat": {
+      "edit": "Édition",
+      "preview": "Aperçu",
+      "appearance": "Apparence",
+      "export": "Exporter / Importer",
+      "form": "Formulaire",
+      "language": "Langue",
+      "help": "Aide",
+      "add": "Ajouter une question",
+      "goto": "Aller à la question",
+      "settings": "Paramètres de la question"
+    },
+    "reason": {
+      "noSelection": "Sélectionnez d’abord une question",
+      "noForm": "Ouvrez d’abord un formulaire",
+      "nothingToUndo": "Rien à annuler",
+      "nothingToRedo": "Rien à rétablir",
+      "noClipboard": "Rien n’a encore été copié",
+      "atTop": "Déjà la première",
+      "atBottom": "Déjà la dernière",
+      "notApplicable": "Ne s’applique pas à cette question",
+      "alreadyActive": "Déjà actif",
+      "exportHidden": "Désactivé par l’application hôte"
+    },
+    "act": {
+      "selectAll": "Sélectionner toutes les questions",
+      "zoomOut": "Texte de l’aperçu plus petit (A−)",
+      "zoomIn": "Texte de l’aperçu plus grand (A+)",
+      "zoomReset": "Texte de l’aperçu : taille d’origine",
+      "theme": "Thème de couleur : {name}",
+      "accent": "Couleur d’accent : {name}",
+      "language": "Langue de l’application : {name}",
+      "export": "Exporter : {name}",
+      "import": "Importer un formulaire…"
+    },
+    "set": {
+      "required": "Marquer comme obligatoire",
+      "notRequired": "Rendre facultative",
+      "readOnly": "Marquer en lecture seule",
+      "notReadOnly": "Rendre modifiable",
+      "defaultValue": "Valeur initiale",
+      "relevant": "Afficher seulement si… (condition)",
+      "constraint": "Règle de validation",
+      "calculation": "Calcul",
+      "choices": "Options de réponse",
+      "label": "Texte de la question",
+      "hint": "Texte d’aide",
+      "appearance": "Apparence",
+      "name": "Nom du champ",
+      "typeHelp": "Aide sur ce type de question"
+    }
   }
 }
