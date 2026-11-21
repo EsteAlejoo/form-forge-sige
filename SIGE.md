@@ -58,4 +58,11 @@ Regla (2026-11-21): basarse en open source y anotar aquí TODO lo tomado: códig
 | Documentación de ODK | CC BY 4.0 | Ayuda en la app (crédito en el cajón de ayuda y Ajustes → Acerca de) | NOTICE.md |
 | Elementor (elementor/elementor) | GPL-3.0 | SOLO IDEAS de organización (panel por pestañas, menú contextual, buscador); ningún código copiado | src/sige/ (propio) |
 | Informes de investigación 2026-11-21 | — | Ideas de SurveyJS, Craft.js, Formbricks, GrapesJS, AppSheet, Glide, etc.: solo ideas, fuentes en `C:\sigeapp\kobo\investigacion_*.md` | plan de funciones (sin código aún) |
+| Documentación ODK (form-datasets) | CC BY 4.0 | Patrón `instance('lista')/root/item[...]` para «Traer columna» | src/sige/relaciones/lookupExpression.ts |
+| Investigación de tablas (AppSheet, Airtable, HoPF, ptype-cat) | solo ideas | Llave = única y sin vacíos; conversión guiada con vista previa | src/sige/relaciones/ |
 Pendiente: al construir una función inspirada en un proyecto concreto, agregar su fila aquí en el mismo commit.
+
+## Estado de construcción (2026-11-21)
+Hecho en la rama sigeapp-adaptacion (sin push): menú contextual, valor inicial amigable, edición en línea de la etiqueta, reglas de revisión Kobo (src/sige/lint), lupa Ctrl+K (src/sige/commands), tablas relacionadas fase 1 (src/sige/relaciones: importar tabla y «Traer columna», más profileColumns).
+En construcción: clic en el celular que lleva a la pestaña correcta + conmutador Editar/Probar.
+Siguen: motor de sugerencias de origen de datos (usa profileColumns), repeat por opción de catálogo, validación por rango desde tabla, edición en línea en el celular, hoja de atajos, panel de problemas «Ir al problema», historial con Restaurar. Antes: probar en Kobo real instance()/pulldata con 3.000+ filas.
