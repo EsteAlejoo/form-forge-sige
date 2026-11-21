@@ -33,7 +33,7 @@ export const showQuestionSettings = (
   editor: ReturnType<typeof useEditorStore>,
   ui: ReturnType<typeof useUiStore>,
   tab: PropertyTab,
-  opts: { sectionKey?: string, focusTestId?: string } = {}
+  opts: { sectionKey?: string, focusTestId?: string, flash?: boolean } = {}
 ): void => {
   try { localStorage.setItem(PROPERTY_TAB_KEY, tab) } catch { /* sin almacenamiento */ }
   if (opts.sectionKey !== undefined && ui.propSectionsCollapsed[opts.sectionKey] === true) {
@@ -46,11 +46,19 @@ export const showQuestionSettings = (
   void nextTick(() => {
     setTimeout(() => {
       const el = document.querySelector<HTMLElement>(`[data-testid="${testId}"]`)
-      const target = el?.matches('input,textarea,select,button') === true
+      const focusable = 'input,textarea,select,button,[role="combobox"]'
+      const target = el?.matches(focusable) === true
         ? el
-        : el?.querySelector<HTMLElement>('input,textarea,select,button') ?? null
+        : el?.querySelector<HTMLElement>(focusable) ?? null
       el?.scrollIntoView?.({ block: 'nearest' })
       target?.focus()
+      // Pestañeo breve del campo (lo pide el clic en el celular, para que se note cuál opción es).
+      if (opts.flash === true) {
+        (target ?? el)?.animate?.(
+          [{ boxShadow: '0 0 0 3px var(--builder-flash-ring)' }, { boxShadow: '0 0 0 0 transparent' }],
+          { duration: 900 },
+        )
+      }
     }, 60)
   })
 }

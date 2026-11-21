@@ -8,6 +8,8 @@ import SubmissionResultDialog from '@/components/preview/SubmissionResultDialog.
 import { useAppI18n } from '@/i18n'
 import { buildFollowTarget, type RenderedQuestion } from '@/preview/followSelection'
 import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
+import type { PartHit } from '@/sige/preview/detectPart' // SIGE
+import { handlePreviewClick } from '@/sige/preview/openFromPreview' // SIGE
 import { nodeIdAtRenderedIndex } from '@/sige/preview/selectFromPreview'
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
@@ -22,13 +24,9 @@ const editor = useEditorStore()
 
 const hostRef = ref<InstanceType<typeof PreviewHost> | null>(null)
 
-/** SIGE: tocar una pregunta del celular la selecciona en el lienzo. */
-const onQuestionClick = (index: number, rendered: RenderedQuestion[]): void => {
-  if (form.doc === null) return
-  const id = nodeIdAtRenderedIndex(form.doc, rendered, index)
-  if (id === null) return
-  editor.select(id)
-  editor.revealNodeId = id
+/** SIGE: tocar el celular selecciona la pregunta y lleva al módulo de la parte tocada (modo «Probar»: nada). */
+const onQuestionClick = (index: number | null, rendered: RenderedQuestion[], hit: PartHit | null): void => {
+  handlePreviewClick(index, rendered, hit, { form, editor, ui })
 }
 
 /** SIGE: clic derecho en el celular abre el menú de esa pregunta. */
