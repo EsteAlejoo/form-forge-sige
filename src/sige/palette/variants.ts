@@ -77,11 +77,11 @@ export const VARIANTS: Variant[] = [
   // Opciones
   v('opciones', 'one', 'select_one', 'Lista (una opción)', 'Botones de radio', 'radio', { label: 'Elige una opción' }),
   v('opciones', 'onemin', 'select_one', 'Desplegable', 'Menú de una línea', 'select', { appearance: 'minimal', label: 'Elige una opción' }),
-  v('opciones', 'onecols', 'select_one', 'En columnas', 'Varias columnas', 'columns', { appearance: 'columns', label: 'Elige una opción' }),
+  v('opciones', 'onecols', 'select_one', 'Columnas ajustadas', 'Se acomodan al ancho', 'columns', { appearance: 'columns-pack', label: 'Elige una opción' }),
   v('opciones', 'likert', 'select_one', 'Escala', 'Una línea, estilo escala', 'likert', { appearance: 'likert', label: '¿Con qué frecuencia?' }, false),
   v('opciones', 'autoc', 'select_one', 'Con buscador', 'Escribir para filtrar', 'select', { appearance: 'autocomplete', label: 'Busca y elige' }),
   v('opciones', 'many', 'select_multiple', 'Varias (casillas)', 'Marcar varias', 'checks', { label: 'Marca las que apliquen' }),
-  v('opciones', 'manycols', 'select_multiple', 'Varias en columnas', 'Casillas en columnas', 'columns', { appearance: 'columns', label: 'Marca las que apliquen' }),
+  v('opciones', 'manycols', 'select_multiple', 'Varias en columnas ajustadas', 'Casillas que se acomodan', 'columns', { appearance: 'columns-pack', label: 'Marca las que apliquen' }),
   v('opciones', 'manymin', 'select_multiple', 'Varias desplegable', 'Lista que se abre', 'select', { appearance: 'minimal', label: 'Marca las que apliquen' }),
   v('opciones', 'rank', 'rank', 'Ordenar', 'Poner en orden', 'radio', { label: 'Ordena por prioridad' }),
   // Fecha y hora

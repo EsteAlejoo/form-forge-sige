@@ -20,7 +20,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string | undefined] }>()
 
 const ES: Record<string, string> = {
   minimal: 'Desplegable', search: 'Con buscador', autocomplete: 'Autocompletar',
-  'columns-pack': 'Columnas ajustadas', columns: 'Columnas', 'no-buttons': 'Sin botones', list: 'Horizontal con etiquetas',
+  'columns-pack': 'Columnas ajustadas (recomendada)', columns: 'Columnas fijas (pueden cortar etiquetas)', 'no-buttons': 'Sin botones', list: 'Horizontal con etiquetas',
   multiline: 'Varias líneas', numbers: 'Teclado numérico', masked: 'Texto oculto', 'thousands-sep': 'Separador de miles',
   'month-year': 'Mes y año', year: 'Solo año', 'no-calendar': 'Sin calendario', annotate: 'Dibujar encima',
   signature: 'Firma', draw: 'Dibujo libre', new: 'Solo cámara nueva', 'new-front': 'Cámara frontal',

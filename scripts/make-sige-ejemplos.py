@@ -75,15 +75,15 @@ f.G('p1', 'Paso 1 · Origen', lambda: (
     R('integer', 'n_muestra', 'N° de muestra', constraint='. >= 1', constraint_message='Desde 1')))
 f.G('p2', 'Paso 2 · Muestra', lambda: (
     R('integer', 'n_frutos', 'Frutos revisados', constraint='. >= 1', constraint_message='Desde 1'),
-    R('select_one calibres', 'calibre', 'Calibre', appearance='columns'),
-    R('select_one colores', 'color', 'Color', appearance='columns'),
+    R('select_one calibres', 'calibre', 'Calibre', appearance='columns-pack'),
+    R('select_one colores', 'color', 'Color', appearance='columns-pack'),
     R('decimal', 'brix', '°Brix', constraint='. >= 0 and . <= 30', constraint_message='Entre 0 y 30'),
     R('decimal', 'firmeza', 'Firmeza (lb)', constraint='. >= 0'),
     R('decimal', 'peso', 'Peso promedio (g)', constraint='. >= 0')))
 f.G('p3', 'Paso 3 · Defectos', lambda: (
-    R('select_multiple def_cond', 'def_condicion', 'Defectos de condición', appearance='columns'),
+    R('select_multiple def_cond', 'def_condicion', 'Defectos de condición', appearance='columns-pack'),
     R('integer', 'n_cond', 'Frutos con defecto de condición', constraint='. >= 0 and . <= ${n_frutos}', constraint_message='No puede superar los frutos revisados'),
-    R('select_multiple def_cal', 'def_calidad', 'Defectos de calidad', appearance='columns'),
+    R('select_multiple def_cal', 'def_calidad', 'Defectos de calidad', appearance='columns-pack'),
     R('integer', 'n_cal', 'Frutos con defecto de calidad', constraint='. >= 0 and . <= ${n_frutos}', constraint_message='No puede superar los frutos revisados'),
     R('text', 'otro_defecto', 'Describe el otro defecto', relevant="selected(${def_condicion}, 'otro') or selected(${def_calidad}, 'otro')"),
     R('calculate', 'pct_cond', '', calculation='if(${n_frutos} > 0, round(100 * %s div ${n_frutos}, 1), 0)' % zz('n_cond')),
@@ -117,8 +117,8 @@ f.G('p1', 'Paso 1 · Sector', lambda: (
     R('time', 'hora', 'Hora'),
     R('select_one predios', 'predio', 'Predio', appearance='minimal'),
     R('select_one sectores', 'sector', 'Sector de riego', choice_filter='predio=${predio}', appearance='minimal'),
-    R('select_one fuentes', 'fuente', 'Fuente de agua', appearance='columns'),
-    R('select_one metodos', 'metodo', 'Método de aforo', appearance='columns')))
+    R('select_one fuentes', 'fuente', 'Fuente de agua', appearance='columns-pack'),
+    R('select_one metodos', 'metodo', 'Método de aforo', appearance='columns-pack')))
 f.G('p2', 'Paso 2 · Medición', lambda: (
     R('decimal', 'volumen', 'Volumen recogido (L)', relevant="${metodo} = 'volumetrico'", constraint='. > 0'),
     R('decimal', 'tiempo', 'Tiempo (s)', relevant="${metodo} = 'volumetrico'", constraint='. > 0'),
@@ -132,10 +132,10 @@ f.G('p2', 'Paso 2 · Medición', lambda: (
     R('calculate', 'pct', '', calculation='if(%s > 0, round(100 * %s div %s, 0), 0)' % (zz('diseno'), zz('caudal'), zz('diseno'))),
     R('note', 'n_caudal', 'Caudal: **${caudal} L/s** · diseño: **${diseno} L/s** · **${pct} %** del diseño')))
 f.G('p3', 'Paso 3 · Condición', lambda: (
-    R('select_one estados', 'estado', 'Estado del sistema', appearance='columns'),
-    R('select_one si_no', 'fugas', '¿Hay fugas?', appearance='columns'),
+    R('select_one estados', 'estado', 'Estado del sistema', appearance='columns-pack'),
+    R('select_one si_no', 'fugas', '¿Hay fugas?', appearance='columns-pack'),
     R('text', 'ubicacion_fuga', '¿Dónde está la fuga?', relevant="${fugas} = 'si'"),
-    R('select_one si_no', 'filtros', '¿Filtros limpios?', appearance='columns'),
+    R('select_one si_no', 'filtros', '¿Filtros limpios?', appearance='columns-pack'),
     R('text', 'obs', 'Observaciones', appearance='multiline')))
 f.G('p4', 'Paso 4 · Cierre', lambda: (
     R('image', 'foto', 'Foto del punto de aforo', appearance='annotate'),
@@ -155,14 +155,14 @@ f = Form('Asistencia de personal (ejemplo)', 'asistencia_ejemplo')
 R = f.R
 f.G('p1', 'Paso 1 · Jornada', lambda: (
     R('date', 'fecha', 'Fecha', default='today()'),
-    R('select_one cuadrillas', 'cuadrilla', 'Cuadrilla', appearance='columns'),
+    R('select_one cuadrillas', 'cuadrilla', 'Cuadrilla', appearance='columns-pack'),
     R('select_one cuarteles', 'cuartel', 'Cuartel', appearance='minimal'),
     R('select_one labores', 'labor', 'Labor', appearance='minimal')))
 f.G('p2', 'Paso 2 · Trabajador', lambda: (
     R('select_one trabajadores', 'trabajador', 'Trabajador', choice_filter='cuadrilla=${cuadrilla}', appearance='minimal'),
-    R('select_one estados', 'estado', 'Estado', appearance='columns'),
+    R('select_one estados', 'estado', 'Estado', appearance='columns-pack'),
     R('time', 'hora_entrada', 'Hora de entrada', relevant="${estado} = 'presente'"),
-    R('select_one jornadas', 'jornada', 'Jornada', relevant="${estado} = 'presente'", appearance='columns'),
+    R('select_one jornadas', 'jornada', 'Jornada', relevant="${estado} = 'presente'", appearance='columns-pack'),
     R('text', 'motivo', 'Motivo', relevant="${estado} != 'presente' and ${estado} != ''")))
 f.G('p3', 'Paso 3 · Producción', lambda: (
     R('calculate', 'horas', '', calculation="instance('jornadas')/root/item[name=${jornada}]/horas"),

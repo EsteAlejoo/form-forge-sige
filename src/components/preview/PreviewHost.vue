@@ -7,6 +7,7 @@ import { makeFetchFormAttachment } from '@/preview/fetchFormAttachment'
 import { normalizeText, resolveRenderedIndex, type FollowTarget, type RenderedQuestion } from '@/preview/followSelection'
 import { warmUpGeolocation } from '@/preview/geolocationWarmup'
 import { loadWebForms } from '@/preview/webFormsLoader'
+import { previewZoom } from '@/sige/preview/zoom'
 
 const { t } = useAppI18n()
 
@@ -269,7 +270,7 @@ defineExpose({ followQuestion })
       <ProgressSpinner style="width: 36px; height: 36px" />
       <span>{{ t('preview.host.loadingEngine') }}</span>
     </div>
-    <div ref="mountEl" class="preview-mount" @click="onMountClick" />
+    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click="onMountClick" />
   </div>
 </template>
 
