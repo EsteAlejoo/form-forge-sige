@@ -5,10 +5,13 @@ import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, r
 import { useEditingLanguage } from '@/composables/useEditingLanguage'
 import { useTypeLabels } from '@/composables/useTypeLabels'
 import { displayText } from '@/core/model/display'
+import { findNode } from '@/core/model/ops'
 import { isContainer, type FormNode } from '@/core/model/types'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
 import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
+import { commitInline, startingText, writeLang } from '@/sige/inlineEdit/inlineEdit' // SIGE
+import InlineText from '@/sige/inlineEdit/InlineText.vue' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 
@@ -38,6 +41,26 @@ const inMultiSelection = computed(() => editor.selectedNodeIds.size > 1 && edito
 const container = computed(() => isContainer(props.node))
 const collapsed = computed(() => editor.collapsedIds.has(props.node.id))
 const label = computed(() => displayText(props.node.label, editingLang.value))
+
+// SIGE: edición en línea de la etiqueta (doble clic / F2). Una sola entrada de deshacer por edición confirmada.
+const editingInline = ref(false)
+const inlineStart = computed(() => startingText(props.node.label, writeLang(form.doc?.languages ?? [], editingLang.value)))
+const startInlineEdit = (): void => { if (form.doc !== null) editingInline.value = true }
+const endInlineEdit = (byKey = true): void => {
+  editingInline.value = false
+  if (byKey) refocus() // un clic fuera ya llevó el foco a otro lado: no se lo quitamos
+}
+const commitInlineEdit = (draft: string, byKey = true): void => {
+  const lang = writeLang(form.doc?.languages ?? [], editingLang.value)
+  const result = commitInline(props.node.label, draft, lang)
+  if (result !== null) {
+    form.mutate(t('properties.basic.undoEditLabel'), (d) => {
+      const n = findNode(d, props.node.id)
+      if (n !== null) n.label = result.next
+    })
+  }
+  endInlineEdit(byKey)
+}
 
 const nodeIssues = computed(() => form.issuesByNode.get(props.node.id) ?? [])
 const hasError = computed(() => nodeIssues.value.some((i) => i.severity === 'error'))
@@ -108,7 +131,9 @@ const deleteNode = (): void => {
 }
 
 const onCardKeydown = (event: KeyboardEvent): void => {
-  if (event.altKey && event.key === 'ArrowUp') {
+  if (event.key === 'F2' && event.target === event.currentTarget) { // SIGE
+    event.preventDefault(); event.stopPropagation(); startInlineEdit()
+  } else if (event.altKey && event.key === 'ArrowUp') {
     event.preventDefault(); event.stopPropagation()
     if (inMultiSelection.value) form.moveSelectionBy(editor.selectedNodeIds, -1)
     else form.moveBy(props.node.id, -1)
@@ -226,7 +251,14 @@ onBeforeUnmount(() => {
         <i :class="def?.icon ?? 'pi pi-question'" />
       </span>
       <div class="node-main">
-        <span class="node-label">{{ label || '—' }}</span>
+        <InlineText
+          v-if="editingInline"
+          :initial="inlineStart"
+          :aria-label="t('properties.basic.label')"
+          @commit="commitInlineEdit"
+          @cancel="endInlineEdit()"
+        />
+        <span v-else class="node-label" @dblclick.stop="startInlineEdit">{{ label || '—' }}</span>
         <div class="node-footer">
           <span class="node-meta">
             <span class="node-type">{{ typeName }}</span>
