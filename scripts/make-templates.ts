@@ -76,7 +76,11 @@ const question = (
   node.name = name
   node.label = L(label)
   if (opts.hint !== undefined) node.hint = L(opts.hint)
-  if (opts.required === true) node.bind.required = 'true()'
+  if (opts.required === true) {
+    node.bind.required = 'true()'
+    // SIGE: mensaje de obligatoriedad para no disparar kobo.required-without-message
+    node.bind.requiredMessage = L(['This question is required.', 'Cette question est obligatoire.'])
+  }
   if (opts.relevant !== undefined) node.bind.relevant = opts.relevant
   if (opts.constraint !== undefined) node.bind.constraint = opts.constraint
   if (opts.constraintMessage !== undefined) node.bind.constraintMessage = L(opts.constraintMessage)

@@ -19,6 +19,7 @@ import {
 import { normalizeDefaultContent } from '@/core/model/translations'
 import { isContainer, type FormDocument, type FormNode } from '@/core/model/types'
 import { scopeNodeId, validateDocument, type Issue } from '@/core/validate'
+import { validateKobo } from '@/sige/lint/rules' // SIGE: reglas Kobo propias
 import { translate } from '@/i18n'
 import * as attachmentsRepo from '@/persistence/attachments-repo'
 import * as formsRepo from '@/persistence/forms-repo'
@@ -133,9 +134,12 @@ export const useFormStore = defineStore('form', () => {
 
   const runValidation = (): void => {
     if (doc.value === null) return
-    issues.value = validateDocument(doc.value as FormDocument, {
-      datasetColumns: datasetColumnsByFilename.value,
-    })
+    issues.value = [
+      ...validateDocument(doc.value as FormDocument, {
+        datasetColumns: datasetColumnsByFilename.value,
+      }),
+      ...validateKobo(doc.value as FormDocument), // SIGE: reglas Kobo propias (src/sige/lint)
+    ]
   }
 
   const scheduleValidation = (): void => {
