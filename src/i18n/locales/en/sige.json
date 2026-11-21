@@ -1,0 +1,18 @@
+{
+  "sigeMenu": {
+    "ariaLabel": "Question actions",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "addBefore": "Add before",
+    "addAfter": "Add after",
+    "addInside": "Add inside",
+    "changeType": "Change type",
+    "copy": "Copy",
+    "cut": "Cut",
+    "paste": "Paste",
+    "shortcutDelete": "Del",
+    "undoChangeType": "Change question type"
+  }
+}

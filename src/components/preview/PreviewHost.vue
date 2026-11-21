@@ -29,6 +29,8 @@ const emit = defineEmits<{
   loaded: []
   /** SIGE: el usuario tocó una pregunta del celular (índice entre las renderizadas). */
   'question-click': [index: number, rendered: RenderedQuestion[]]
+  /** SIGE: clic derecho sobre una pregunta del celular. */
+  'question-contextmenu': [index: number, rendered: RenderedQuestion[], event: MouseEvent]
 }>()
 
 const hostEl = ref<HTMLDivElement | null>(null)
@@ -255,6 +257,20 @@ const onMountClick = (event: MouseEvent): void => {
   if (index !== -1) emit('question-click', index, rendered)
 }
 
+/** SIGE: clic derecho en el celular → menú contextual de esa pregunta. */
+const onMountContextmenu = (event: MouseEvent): void => {
+  if (mountEl.value === null) return
+  const hit = (event.target as HTMLElement | null)?.closest<HTMLElement>('.question-container')
+  if (hit == null) return
+  const containers = [...mountEl.value.querySelectorAll<HTMLElement>('.question-container')]
+  const rendered: RenderedQuestion[] = containers.map((el) => ({
+    label: normalizeText(el.querySelector('.control-text label')?.textContent ?? ''),
+    hint: normalizeText(el.querySelector('.control-text .hint')?.textContent ?? ''),
+  }))
+  const index = containers.indexOf(hit)
+  if (index !== -1) emit('question-contextmenu', index, rendered, event)
+}
+
 defineExpose({ followQuestion })
 </script>
 
@@ -270,7 +286,7 @@ defineExpose({ followQuestion })
       <ProgressSpinner style="width: 36px; height: 36px" />
       <span>{{ t('preview.host.loadingEngine') }}</span>
     </div>
-    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click="onMountClick" />
+    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click="onMountClick" @contextmenu="onMountContextmenu" />
   </div>
 </template>
 

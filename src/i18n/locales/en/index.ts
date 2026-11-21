@@ -17,6 +17,7 @@ import preview from './preview.json'
 import properties from './properties.json'
 import settings from './settings.json'
 import shell from './shell.json'
+import sige from './sige.json' // SIGE
 import stores from './stores.json'
 import types from './types.json'
 
@@ -37,4 +38,5 @@ export const en = {
   ...stores,
   ...central,
   ...types,
+  ...sige, // SIGE
 }

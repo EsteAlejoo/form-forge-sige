@@ -1,0 +1,18 @@
+{
+  "sigeMenu": {
+    "ariaLabel": "Acciones de la pregunta",
+    "duplicate": "Duplicar",
+    "delete": "Eliminar",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "addBefore": "Agregar antes",
+    "addAfter": "Agregar después",
+    "addInside": "Agregar dentro",
+    "changeType": "Cambiar tipo",
+    "copy": "Copiar",
+    "cut": "Cortar",
+    "paste": "Pegar",
+    "shortcutDelete": "Supr",
+    "undoChangeType": "Cambiar tipo de pregunta"
+  }
+}
