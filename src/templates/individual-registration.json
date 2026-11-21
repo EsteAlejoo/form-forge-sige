@@ -27,7 +27,11 @@
       "id": "individual_registration_n2",
       "name": "registration_date",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -41,7 +45,11 @@
       "id": "individual_registration_n3",
       "name": "full_name",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -153,7 +161,11 @@
       "id": "individual_registration_n11",
       "name": "consent",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",

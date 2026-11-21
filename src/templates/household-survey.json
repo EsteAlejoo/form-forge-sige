@@ -27,7 +27,11 @@
       "id": "household_survey_n2",
       "name": "interview_date",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -41,7 +45,11 @@
       "id": "household_survey_n3",
       "name": "region",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -84,7 +92,11 @@
       "id": "household_survey_n6",
       "name": "head_name",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -99,6 +111,10 @@
       "name": "household_size",
       "bind": {
         "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        },
         "constraint": ". >= 1 and . <= 50",
         "constraintMessage": {
           "English (en)": "Household size must be between 1 and 50.",
@@ -128,7 +144,11 @@
           "id": "household_survey_n9",
           "name": "member_name",
           "bind": {
-            "required": "true()"
+            "required": "true()",
+            "requiredMessage": {
+              "English (en)": "This question is required.",
+              "French (fr)": "Cette question est obligatoire."
+            }
           },
           "body": {},
           "kind": "question",
