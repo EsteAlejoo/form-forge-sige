@@ -1,0 +1,47 @@
+{
+  "sigeTables": {
+    "import": {
+      "button": "Importer un tableau…",
+      "title": "Importer un tableau comme liste",
+      "intro": "Choisissez un fichier .csv ou .xlsx. Ses colonnes deviennent les options d’une nouvelle liste ; celles que vous n’utilisez pas comme nom ou libellé restent des colonnes supplémentaires.",
+      "pickFile": "Choisir un fichier",
+      "fileName": "Fichier : {name}",
+      "sheet": "Feuille",
+      "listName": "Nom de la liste",
+      "nameColumn": "Colonne du nom (code unique)",
+      "labelColumn": "Colonne du libellé (ce que voient les gens)",
+      "sameAsName": "Identique au nom",
+      "keyTag": "unique",
+      "preview": "Aperçu : {shown} premières lignes sur {total}",
+      "extras": "Colonnes supplémentaires : {columns}",
+      "noExtras": "Aucune colonne supplémentaire : toutes les colonnes servent de nom ou de libellé.",
+      "warnEmpty": "{count} valeur(s) vide(s) dans la colonne du nom : un nom est généré à partir du libellé.",
+      "warnDuplicate": "{count} valeur(s) répétée(s) dans la colonne du nom : les suivantes reçoivent un suffixe _2, _3.",
+      "warnUnsafe": "{count} nom(s) seront nettoyés (accents, espaces, symboles).",
+      "warnSizePreview": "Plus de {limit} lignes : l’aperçu peut être lent.",
+      "warnSizeKobo": "Plus de {limit} lignes : Kobo recommande un fichier CSV joint plutôt qu’une liste interne.",
+      "errEmpty": "Le fichier ne contient aucune ligne.",
+      "errRead": "Le fichier n’a pas pu être lu.",
+      "errListInvalid": "Utilisez des lettres, des chiffres et des tirets bas ; commencez par une lettre ou un tiret bas.",
+      "errListExists": "Une liste nommée {name} existe déjà.",
+      "create": "Créer la liste",
+      "cancel": "Annuler",
+      "undo": "Importer un tableau comme liste"
+    },
+    "lookup": {
+      "title": "Récupérer une colonne d’un tableau",
+      "origin": "Question source",
+      "originPlaceholder": "Choisissez une question select_one",
+      "column": "Colonne à récupérer",
+      "columnPlaceholder": "Choisissez une colonne",
+      "noOrigins": "Aucune question select_one n’utilise une liste avec des colonnes supplémentaires. Importez d’abord un tableau (Listes de choix, Importer un tableau).",
+      "replaces": "Ceci remplace le calcul actuel (Ctrl+Z l’annule).",
+      "example": "Exemple : {field} = {name} donne {column} = {value}",
+      "undo": "Récupérer une colonne d’un tableau",
+      "listMissing": "La liste {list} n’existe pas dans ce formulaire.",
+      "columnMissing": "La liste {list} n’a pas de colonne {column}.",
+      "originMissing": "La question {field} n’existe pas.",
+      "originOtherList": "La question {field} utilise une autre liste que {list}."
+    }
+  }
+}

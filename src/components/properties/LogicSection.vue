@@ -11,6 +11,7 @@ import type { FormNode, Lang } from '@/core/model/types'
 import { getQuestionType } from '@/core/registry/question-types'
 import { hasText } from '@/core/util/guards'
 import { useAppI18n } from '@/i18n'
+import LookupColumnField from '@/sige/relaciones/LookupColumnField.vue' // SIGE
 import { useFormStore } from '@/stores/form'
 
 const props = defineProps<{ node: FormNode }>()
@@ -115,6 +116,8 @@ const setRepeatCount = (value: string): void => {
         :get-caret="calcCaret"
         @update:model-value="setExpr('calculation', t('properties.logic.undoEditCalculation'))($event)"
       />
+      <!-- SIGE: «Traer columna» de otra tabla (genera el instance() del calculate) -->
+      <LookupColumnField v-if="isCalculate && node.kind === 'question'" :node="node" />
     </div>
 
     <label v-if="node.kind === 'repeat'" class="prop-field">
