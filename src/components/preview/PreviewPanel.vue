@@ -6,7 +6,8 @@ import PreviewHost from '@/components/preview/PreviewHost.vue'
 import PreviewToolbar from '@/components/preview/PreviewToolbar.vue'
 import SubmissionResultDialog from '@/components/preview/SubmissionResultDialog.vue'
 import { useAppI18n } from '@/i18n'
-import { buildFollowTarget } from '@/preview/followSelection'
+import { buildFollowTarget, type RenderedQuestion } from '@/preview/followSelection'
+import { nodeIdAtRenderedIndex } from '@/sige/preview/selectFromPreview'
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 import { usePreviewStore } from '@/stores/preview'
@@ -19,6 +20,15 @@ const ui = useUiStore()
 const editor = useEditorStore()
 
 const hostRef = ref<InstanceType<typeof PreviewHost> | null>(null)
+
+/** SIGE: tocar una pregunta del celular la selecciona en el lienzo. */
+const onQuestionClick = (index: number, rendered: RenderedQuestion[]): void => {
+  if (form.doc === null) return
+  const id = nodeIdAtRenderedIndex(form.doc, rendered, index)
+  if (id === null) return
+  editor.select(id)
+  editor.revealNodeId = id
+}
 
 onMounted(() => { preview.start() })
 
@@ -100,6 +110,7 @@ const startNewInstance = async (): Promise<void> => {
       @engine-error="preview.reportEngineError"
       @submit="onSubmit"
       @loaded="follow(false)"
+      @question-click="onQuestionClick"
     />
 
     <SubmissionResultDialog

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
+
+import { previewZoomPercent, resetPreviewZoom, stepPreviewZoom } from '@/sige/preview/zoom'
 import { useRouter } from 'vue-router'
 
 import { useAppI18n } from '@/i18n'
@@ -50,6 +52,11 @@ const openFullPreview = (): void => {
         data-testid="preview-refresh"
         @click="preview.refreshNow()"
       />
+      <span class="sige-zoom" role="group" aria-label="Tamaño del texto" data-testid="sige-zoom">
+        <button type="button" class="preset-button" title="Texto más pequeño" aria-label="Texto más pequeño" data-testid="sige-zoom-out" @click="stepPreviewZoom(-1)">A−</button>
+        <button type="button" class="sige-zoom-pct" title="Restablecer tamaño" aria-label="Restablecer tamaño del texto" data-testid="sige-zoom-reset" @click="resetPreviewZoom()">{{ previewZoomPercent }}%</button>
+        <button type="button" class="preset-button" title="Texto más grande" aria-label="Texto más grande" data-testid="sige-zoom-in" @click="stepPreviewZoom(1)">A+</button>
+      </span>
       <span class="preset-group" role="group" :aria-label="t('preview.toolbar.widthPresetGroup')">
         <button
           v-for="p in PRESETS"
@@ -89,6 +96,9 @@ const openFullPreview = (): void => {
 </template>
 
 <style scoped>
+.sige-zoom { display: inline-flex; align-items: center; gap: 2px; margin-inline-end: var(--odk-spacing-s); }
+.sige-zoom .preset-button { font-size: 0.72rem; font-weight: 600; min-width: 28px; }
+.sige-zoom-pct { border: none; background: none; color: var(--odk-muted-text-color); font-family: inherit; font-size: 0.7rem; cursor: pointer; padding: 0 2px; }
 .preview-toolbar {
   display: flex;
   align-items: center;

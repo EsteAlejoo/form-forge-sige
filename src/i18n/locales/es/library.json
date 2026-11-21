@@ -1,7 +1,7 @@
 {
   "library": {
     "header": {
-      "title": "Form Forge for ODK",
+      "title": "ElMemento Kobo",
       "subtitle": "Los formularios se almacenan solo en este navegador; nada sale de su dispositivo.",
       "importForm": "Importar formulario",
       "newForm": "Nuevo formulario",
@@ -96,8 +96,8 @@
       "exportArchive": "Exportar archivo"
     },
     "footer": {
-      "version": "Form Forge for ODK v{version}",
-      "madeWith": "Hecho con ❤️ por",
+      "version": "ElMemento Kobo · adaptado por SigeApp · basado en Form Forge for ODK v{version}",
+      "madeWith": "Licencia MIT · autor original:",
       "madeWithAuthor": "punkch",
       "storagePersistent": "Almacenamiento: persistente",
       "storageHint": "El almacenamiento puede borrarse si el dispositivo se queda sin espacio —",
