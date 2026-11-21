@@ -10,7 +10,7 @@ Repositorio **público**: solo datos ficticios. Nada de agrícolas, cuarteles, u
 ## Dónde está lo propio
 - `src/sige/` — todo lo nuevo (paleta por categorías, panel izquierdo, ejemplos, preview→selección).
 - Ganchos mínimos en archivos originales, marcados con el comentario `SIGE`:
-  `views/FormEditorView.vue`, `views/FormLibraryView.vue`, `components/palette/QuestionPalette.vue`,
+  `views/FormEditorView.vue`, `components/canvas/NodeList.vue`, `components/canvas/TreeNodeCard.vue`, `views/FormLibraryView.vue`, `components/palette/QuestionPalette.vue`,
   `components/properties/{PropertyPanel,BasicSection}.vue` (+ `tests/component/basic-section-default-image.spec.ts`), `components/preview/{PreviewHost,PreviewPanel}.vue`,
   `theme/constants.ts` (acento rosa), `i18n/locales/es/{library,appSettings}.json` (nombre y créditos),
   `index.html` y `vite.config.ts` (nombre), `tests/unit/theme-constants.spec.ts`.
