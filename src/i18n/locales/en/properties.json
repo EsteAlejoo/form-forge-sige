@@ -35,7 +35,24 @@
       "undoUploadDefault": "Upload default image",
       "undoToggleRequired": "Toggle required",
       "undoToggleReadOnly": "Toggle read only",
-      "defaultImageHint": "This is the template image shown before annotating, drawing, or signing."
+      "defaultImageHint": "This is the template image shown before annotating, drawing, or signing.",
+      "defaultPreset": {
+        "label": "Preset",
+        "none": "None",
+        "today": "Today",
+        "now": "Now",
+        "zero": "Zero",
+        "fixed": "Fixed value",
+        "first": "First option",
+        "chosen": "Chosen option(s)",
+        "custom": "Custom",
+        "value": "Value",
+        "undo": "Edit default",
+        "pickOne": "Pick an option",
+        "pickMany": "Pick options",
+        "customHint": "Custom expression kept as is. Pick a preset to replace it.",
+        "invalid": "Invalid value"
+      }
     },
     "logic": {
       "relevant": "Relevant (skip logic)",

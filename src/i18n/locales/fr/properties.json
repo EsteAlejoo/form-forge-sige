@@ -35,7 +35,24 @@
       "undoUploadDefault": "Téléverser l'image par défaut",
       "undoToggleRequired": "Basculer obligatoire",
       "undoToggleReadOnly": "Basculer lecture seule",
-      "defaultImageHint": "Il s'agit de l'image modèle affichée avant l'annotation, le dessin ou la signature."
+      "defaultImageHint": "Il s'agit de l'image modèle affichée avant l'annotation, le dessin ou la signature.",
+      "defaultPreset": {
+        "label": "Valeur initiale",
+        "none": "Aucune",
+        "today": "Aujourd’hui",
+        "now": "Maintenant",
+        "zero": "Zéro",
+        "fixed": "Valeur fixe",
+        "first": "Première option",
+        "chosen": "Option(s) choisie(s)",
+        "custom": "Personnalisé",
+        "value": "Valeur",
+        "undo": "Modifier la valeur par défaut",
+        "pickOne": "Choisir une option",
+        "pickMany": "Choisir des options",
+        "customHint": "Expression personnalisée conservée telle quelle. Choisissez une valeur initiale pour la remplacer.",
+        "invalid": "Valeur non valide"
+      }
     },
     "logic": {
       "relevant": "Pertinence (logique de saut)",
