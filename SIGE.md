@@ -11,7 +11,7 @@ Repositorio **público**: solo datos ficticios. Nada de agrícolas, cuarteles, u
 - `src/sige/` — todo lo nuevo (paleta por categorías, panel izquierdo, ejemplos, preview→selección).
 - Ganchos mínimos en archivos originales, marcados con el comentario `SIGE`:
   `views/FormEditorView.vue`, `components/canvas/NodeList.vue`, `components/canvas/TreeNodeCard.vue`, `views/FormLibraryView.vue`, `components/palette/QuestionPalette.vue`,
-  `components/properties/{PropertyPanel,BasicSection}.vue` (+ `tests/component/basic-section-default-image.spec.ts`), `components/preview/{PreviewHost,PreviewPanel}.vue`,
+  `components/properties/{PropertyPanel,BasicSection}.vue` (+ `tests/component/basic-section-default-image.spec.ts`), `components/preview/{PreviewHost,PreviewPanel,PreviewToolbar}.vue`, `src/sige/commands/bridge.ts`,
   `theme/constants.ts` (acento rosa), `i18n/locales/es/{library,appSettings}.json` (nombre y créditos),
   `index.html` y `vite.config.ts` (nombre), `tests/unit/theme-constants.spec.ts`.
 - `scripts/make-sige-ejemplos.py` — genera los ejemplos agrícolas (XLSForm con datos inventados).
@@ -60,9 +60,10 @@ Regla (2026-11-21): basarse en open source y anotar aquí TODO lo tomado: códig
 | Informes de investigación 2026-11-21 | — | Ideas de SurveyJS, Craft.js, Formbricks, GrapesJS, AppSheet, Glide, etc.: solo ideas, fuentes en `C:\sigeapp\kobo\investigacion_*.md` | plan de funciones (sin código aún) |
 | Documentación ODK (form-datasets) | CC BY 4.0 | Patrón `instance('lista')/root/item[...]` para «Traer columna» | src/sige/relaciones/lookupExpression.ts |
 | Investigación de tablas (AppSheet, Airtable, HoPF, ptype-cat) | solo ideas | Llave = única y sin vacíos; conversión guiada con vista previa | src/sige/relaciones/ |
+| Elementor (idea) | GPL-3.0 | Patrón «clic en el lienzo abre su panel», solo idea | src/sige/preview/ |
 Pendiente: al construir una función inspirada en un proyecto concreto, agregar su fila aquí en el mismo commit.
 
 ## Estado de construcción (2026-11-21)
 Hecho en la rama sigeapp-adaptacion (sin push): menú contextual, valor inicial amigable, edición en línea de la etiqueta, reglas de revisión Kobo (src/sige/lint), lupa Ctrl+K (src/sige/commands), tablas relacionadas fase 1 (src/sige/relaciones: importar tabla y «Traer columna», más profileColumns).
-En construcción: clic en el celular que lleva a la pestaña correcta + conmutador Editar/Probar.
+Hecho también: clic en el celular que lleva a la pestaña/campo de la parte tocada (src/sige/preview/previewParts.ts, detectPart.ts) + conmutador Editar/Probar. Selectores frágiles: asterisco y medios (clases del Vue de web-forms; si fallan, solo selecciona).
 Siguen: motor de sugerencias de origen de datos (usa profileColumns), repeat por opción de catálogo, validación por rango desde tabla, edición en línea en el celular, hoja de atajos, panel de problemas «Ir al problema», historial con Restaurar. Antes: probar en Kobo real instance()/pulldata con 3.000+ filas.
