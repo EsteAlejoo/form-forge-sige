@@ -45,10 +45,18 @@ describe('BasicSection default-image swap', () => {
   })
 
   it('renders a plain InputText for a non-image question default', () => {
-    const node = addNode('text')
+    // SIGE: text/date/number/select usan presets (DefaultPresetField); range conserva el campo crudo.
+    const node = addNode('range')
     const wrapper = mountWith(pinia, BasicSection, { props: { node } })
     expect(wrapper.find('[data-testid="prop-default"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="prop-default-image"]').exists()).toBe(false)
+  })
+
+  it('SIGE: a text question shows the preset selector instead of the raw input', () => {
+    const node = addNode('text')
+    const wrapper = mountWith(pinia, BasicSection, { props: { node } })
+    expect(wrapper.find('[data-testid="prop-default-preset"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="prop-default"]').exists()).toBe(false)
   })
 
   it('falls back to InputText for a dynamic (expression) stored default', () => {

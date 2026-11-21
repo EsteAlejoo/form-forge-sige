@@ -35,7 +35,24 @@
       "undoUploadDefault": "Subir la imagen predeterminada",
       "undoToggleRequired": "Alternar obligatorio",
       "undoToggleReadOnly": "Alternar solo lectura",
-      "defaultImageHint": "Esta es la imagen de plantilla que se muestra antes de anotar, dibujar o firmar."
+      "defaultImageHint": "Esta es la imagen de plantilla que se muestra antes de anotar, dibujar o firmar.",
+      "defaultPreset": {
+        "label": "Valor inicial",
+        "none": "Ninguno",
+        "today": "Hoy",
+        "now": "Ahora",
+        "zero": "Cero",
+        "fixed": "Valor fijo",
+        "first": "Primera opción",
+        "chosen": "Opción(es) elegida(s)",
+        "custom": "Personalizado",
+        "value": "Valor",
+        "undo": "Editar el valor predeterminado",
+        "pickOne": "Elige una opción",
+        "pickMany": "Elige opciones",
+        "customHint": "Expresión personalizada conservada tal cual. Elige un valor inicial para reemplazarla.",
+        "invalid": "Valor no válido"
+      }
     },
     "logic": {
       "relevant": "Relevancia (lógica de salto)",

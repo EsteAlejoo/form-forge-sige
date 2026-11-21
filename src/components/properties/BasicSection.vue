@@ -15,6 +15,8 @@ import { findNode } from '@/core/model/ops'
 import type { FormNode, Lang } from '@/core/model/types'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
+import DefaultPresetField from '@/sige/DefaultPresetField.vue' // SIGE
+import { hasNoDefaultSupport, presetsFor } from '@/sige/defaultPresets' // SIGE
 import { useFormStore } from '@/stores/form'
 
 const props = withDefaults(defineProps<{ node: FormNode, part?: 'all' | 'content' | 'rules' | 'adv' }>(), { part: 'all' })
@@ -59,6 +61,15 @@ const uploadDefaultImage = async (file: File): Promise<void> => {
     if (n !== null && n.kind === 'question') n.defaultValue = storedAs
   })
 }
+
+// SIGE: geo/medios/acknowledge/note no llevan valor inicial (se oculta, salvo que ya traiga uno para no esconderlo).
+// La imagen conserva su selector de plantilla.
+const showDefaultField = computed(() =>
+  props.node.kind !== 'question' ||
+  props.node.type === 'image' ||
+  !hasNoDefaultSupport(props.node.type) ||
+  props.node.defaultValue !== undefined
+)
 
 const nameIssues = computed(() =>
   (form.issuesByNode.get(props.node.id) ?? []).filter((i) => i.code.startsWith('name.'))
@@ -146,7 +157,7 @@ const setReadonly = (value: boolean): void => {
 
     <LabelMediaSection v-if="showLabel && show('content')" :node="node" />
 
-    <div v-if="node.kind === 'question' && !isMeta && show('rules')" class="prop-field">
+    <div v-if="node.kind === 'question' && !isMeta && show('rules') && showDefaultField" class="prop-field">
       <span>{{ t('properties.basic.defaultValue') }}<HelpPopover :field="isImageDefaultPickable ? 'defaultImage' : 'defaultValue'" /></span>
       <template v-if="isImageDefaultPickable">
         <AttachmentPicker
@@ -160,6 +171,8 @@ const setReadonly = (value: boolean): void => {
         />
         <small class="prop-default-image-hint">{{ t('properties.basic.defaultImageHint') }}</small>
       </template>
+      <!-- SIGE: valor inicial amigable (presets por tipo); el resto de tipos conserva el campo crudo -->
+      <DefaultPresetField v-else-if="node.kind === 'question' && presetsFor(node.type).length > 0" :node="node" />
       <InputText
         v-else
         :model-value="node.defaultValue ?? ''"
