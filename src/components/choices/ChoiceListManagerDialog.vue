@@ -8,6 +8,7 @@ import { deleteChoiceList, listUsage, renameChoiceList } from '@/core/model/choi
 import { newChoiceList } from '@/core/model/factory'
 import type { FormDocument } from '@/core/model/types'
 import { useAppI18n } from '@/i18n'
+import ImportTableDialog from '@/sige/relaciones/ImportTableDialog.vue' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 
@@ -86,6 +87,9 @@ const requestDelete = (row: Row): void => {
   confirmingDelete.value = null
   form.mutate(t('properties.listManager.undoDeleteList'), (d) => { deleteChoiceList(d, row.name) })
 }
+
+// SIGE: «Importar tabla» (csv/xlsx → lista con columnas extra)
+const importing = ref(false)
 
 const createList = (): void => {
   form.mutate(t('properties.listManager.undoNewList'), (d) => { newChoiceList(d) })
@@ -209,8 +213,17 @@ const createList = (): void => {
         data-testid="new-choice-list"
         @click="createList"
       />
+      <!-- SIGE -->
+      <Button
+        :label="t('sigeTables.import.button')"
+        icon="pi pi-table"
+        severity="secondary"
+        data-testid="sige-import-table-open"
+        @click="importing = true"
+      />
     </template>
   </Dialog>
+  <ImportTableDialog v-model:visible="importing" />
 </template>
 
 <style scoped>

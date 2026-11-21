@@ -1,0 +1,47 @@
+{
+  "sigeTables": {
+    "import": {
+      "button": "Importar tabla…",
+      "title": "Importar tabla como lista",
+      "intro": "Elige un archivo .csv o .xlsx. Sus columnas pasan a ser las opciones de una lista nueva; las que no uses como nombre o etiqueta quedan como columnas extra.",
+      "pickFile": "Elegir archivo",
+      "fileName": "Archivo: {name}",
+      "sheet": "Hoja",
+      "listName": "Nombre de la lista",
+      "nameColumn": "Columna para el nombre (código único)",
+      "labelColumn": "Columna para la etiqueta (lo que ve la gente)",
+      "sameAsName": "Igual al nombre",
+      "keyTag": "única",
+      "preview": "Vista previa: primeras {shown} de {total} filas",
+      "extras": "Columnas extra: {columns}",
+      "noExtras": "Sin columnas extra: todas las columnas se usan como nombre o etiqueta.",
+      "warnEmpty": "{count} valor(es) vacío(s) en la columna de nombre: se genera un nombre desde la etiqueta.",
+      "warnDuplicate": "{count} valor(es) repetido(s) en la columna de nombre: los siguientes llevan sufijo _2, _3.",
+      "warnUnsafe": "{count} nombre(s) se van a limpiar (tildes, espacios, símbolos).",
+      "warnSizePreview": "Más de {limit} filas: la vista previa puede ir lenta.",
+      "warnSizeKobo": "Más de {limit} filas: Kobo recomienda un CSV adjunto en vez de una lista interna.",
+      "errEmpty": "El archivo no tiene filas.",
+      "errRead": "No se pudo leer el archivo.",
+      "errListInvalid": "Usa letras, números y guion bajo; empieza con letra o guion bajo.",
+      "errListExists": "Ya existe una lista llamada {name}.",
+      "create": "Crear lista",
+      "cancel": "Cancelar",
+      "undo": "Importar tabla como lista"
+    },
+    "lookup": {
+      "title": "Traer una columna de una tabla",
+      "origin": "Pregunta de origen",
+      "originPlaceholder": "Elige una pregunta select_one",
+      "column": "Columna a traer",
+      "columnPlaceholder": "Elige una columna",
+      "noOrigins": "Ninguna pregunta select_one usa una lista con columnas extra. Importa una tabla primero (Listas de opciones, Importar tabla).",
+      "replaces": "Esto reemplaza el cálculo escrito ahora (Ctrl+Z lo deshace).",
+      "example": "Ejemplo: {field} = {name} da {column} = {value}",
+      "undo": "Traer columna de tabla",
+      "listMissing": "La lista {list} no existe en este formulario.",
+      "columnMissing": "La lista {list} no tiene la columna {column}.",
+      "originMissing": "La pregunta {field} no existe.",
+      "originOtherList": "La pregunta {field} usa una lista distinta de {list}."
+    }
+  }
+}

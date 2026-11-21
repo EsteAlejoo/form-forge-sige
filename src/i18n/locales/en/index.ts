@@ -18,6 +18,7 @@ import properties from './properties.json'
 import settings from './settings.json'
 import shell from './shell.json'
 import sige from './sige.json' // SIGE
+import sigeTables from './sigeTables.json' // SIGE
 import stores from './stores.json'
 import types from './types.json'
 
@@ -39,4 +40,5 @@ export const en = {
   ...central,
   ...types,
   ...sige, // SIGE
+  ...sigeTables, // SIGE
 }
