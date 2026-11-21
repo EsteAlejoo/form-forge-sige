@@ -26,7 +26,7 @@ Inspirados en Elementor. Orden sugerido: 1 → 3.
    directo; sobre el celular requiere un recuadro flotante, porque lo dibuja el motor oficial de ODK
    (`@getodk/web-forms`). Reutilizar `form.updateNode` (una entrada de deshacer) y la alineación de
    `src/sige/preview/selectFromPreview.ts` para saber qué nodo se tocó.
-2. **Menú contextual** (clic derecho sobre una pregunta, en el lienzo y en el celular): Duplicar, Eliminar,
+2. ~~**Menú contextual**~~ ✅ hecho (`src/sige/contextMenu/`; falta «Juntar con la siguiente pantalla»: decidir qué pasa con `relevant` y el nombre del grupo que desaparece). Original: (clic derecho sobre una pregunta, en el lienzo y en el celular): Duplicar, Eliminar,
    Subir/Bajar, Agregar antes/después, Agregar dentro (grupos), Cambiar tipo, Copiar/Cortar/Pegar, «Juntar con la
    siguiente pantalla». Mostrar los atajos al lado (Ctrl+D, Supr, Alt+↑/↓). Usar las acciones que ya existen en
    `useSelectionActions` y `form.*`; no duplicar lógica.
@@ -37,3 +37,13 @@ Inspirados en Elementor. Orden sugerido: 1 → 3.
 5. Plantilla/bloque de conteo por nivel (NA0–NA4) nativo, avisos de compatibilidad con Kobo, tablas relacionadas
    más visibles, buscador Ctrl+K.
 6. Publicar compilado (GitHub Pages del fork) y arranque automático en Windows — requieren visto bueno.
+
+## Plan de funciones del constructor (2026-11-21, de la investigación en C:\sigeapp\kobo\investigacion_*.md)
+Nada de esto está construido. Ctrl+K y el historial de versiones NO existen en el fork (solo en el prototipo antiguo; la tabla `snapshots` se guarda pero no hay pantalla).
+**Ola 1 (costo S, sin dependencias):** edición en línea en el árbol · aviso fijo «la vista previa no es KoboCollect» ·
+reglas de lint nuevas (required/constraint sin mensaje, `relevant` imposible, escalera NA0-NA4 incompleta) ·
+hoja de atajos (Ctrl+?) y buscador Ctrl+K · indicador del punto de soltado al arrastrar (CSS) · selector de dispositivo (tamaños/girar).
+**Ola 2 (S-M):** panel de problemas con «Ir al problema» · pestaña «Lógica» (lista de todos los relevant/constraint/calculate, solo lectura) ·
+historial como lista con Restaurar (sobre `snapshots`) · pegar solo los ajustes (Ctrl+Shift+V) · menú `@` para recordar respuestas en etiquetas (verificar valor alternativo en Kobo).
+**Ola 3 (M):** bloque insertable de conteo NA0-NA4 + flujo por plaga (guardar selección como bloque en templates-repo) · reglas de destino al arrastrar (canMoveIn).
+**Descartado:** arrastrar elementos nuevos al celular (lo dibuja el motor ODK, costo L), widgets globales, versiones/notas compartidas (requieren tablas o servicio).
