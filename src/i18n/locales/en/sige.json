@@ -15,6 +15,15 @@
     "shortcutDelete": "Del",
     "undoChangeType": "Change question type"
   },
+  "sigePreview": {
+    "modeGroup": "What tapping the phone does",
+    "modeEdit": "Edit",
+    "modeTest": "Try",
+    "modeEditHint": "Edit on tap: tapping a part of the phone opens its module in Settings (active)",
+    "modeTestHint": "Try: the phone works as a normal form and changes nothing in the editor (active)",
+    "modeEditSwitch": "Switch to \"Edit on tap\": tapping a part opens its module in Settings",
+    "modeTestSwitch": "Switch to \"Try\": fill in the form without changing the editor"
+  },
   "sigePalette": {
     "ariaLabel": "Search functions",
     "placeholder": "Search for a function or a question…  (> actions, {'@'} questions)",

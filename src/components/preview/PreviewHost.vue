@@ -7,6 +7,7 @@ import { makeFetchFormAttachment } from '@/preview/fetchFormAttachment'
 import { normalizeText, resolveRenderedIndex, type FollowTarget, type RenderedQuestion } from '@/preview/followSelection'
 import { warmUpGeolocation } from '@/preview/geolocationWarmup'
 import { loadWebForms } from '@/preview/webFormsLoader'
+import { detectPart, type PartHit } from '@/sige/preview/detectPart' // SIGE
 import { previewZoom } from '@/sige/preview/zoom'
 
 const { t } = useAppI18n()
@@ -27,8 +28,9 @@ const emit = defineEmits<{
   /** web-forms finished resolving form state (before the question DOM flushes
    * — see the onLoaded handler below, which waits past the flush). */
   loaded: []
-  /** SIGE: el usuario tocó una pregunta del celular (índice entre las renderizadas). */
-  'question-click': [index: number, rendered: RenderedQuestion[]]
+  /** SIGE: el usuario tocó el celular. `index` = pregunta tocada (null si fue un encabezado de grupo/repetición);
+   * `hit` = qué parte (etiqueta, opción, asterisco…), null si no se reconoció ninguna. */
+  'question-click': [index: number | null, rendered: RenderedQuestion[], hit: PartHit | null]
   /** SIGE: clic derecho sobre una pregunta del celular. */
   'question-contextmenu': [index: number, rendered: RenderedQuestion[], event: MouseEvent]
 }>()
@@ -243,18 +245,22 @@ const followQuestion = (target: FollowTarget, opts: { flash: boolean }): boolean
   return true
 }
 
-/** SIGE: clic en una pregunta del celular → avisar para seleccionarla en el lienzo. */
+/** SIGE: clic en el celular → avisar qué pregunta y qué parte. Se escucha en fase de captura: el motor puede
+ * volver a dibujar o detener la propagación al marcar una opción, y el objetivo ya no estaría en el árbol.
+ * No se llama a preventDefault ni stopPropagation: el motor reacciona como siempre. */
 const onMountClick = (event: MouseEvent): void => {
   if (mountEl.value === null) return
-  const hit = (event.target as HTMLElement | null)?.closest<HTMLElement>('.question-container')
-  if (hit == null) return
+  const target = event.target as Element | null
+  const hit = detectPart(target, mountEl.value, { clientX: event.clientX })
   const containers = [...mountEl.value.querySelectorAll<HTMLElement>('.question-container')]
   const rendered: RenderedQuestion[] = containers.map((el) => ({
     label: normalizeText(el.querySelector('.control-text label')?.textContent ?? ''),
     hint: normalizeText(el.querySelector('.control-text .hint')?.textContent ?? ''),
   }))
-  const index = containers.indexOf(hit)
-  if (index !== -1) emit('question-click', index, rendered)
+  const question = target?.closest<HTMLElement>('.question-container') ?? null
+  const index = question === null ? -1 : containers.indexOf(question)
+  if (index !== -1) emit('question-click', index, rendered, hit)
+  else if (hit?.panel != null) emit('question-click', null, rendered, hit)
 }
 
 /** SIGE: clic derecho en el celular → menú contextual de esa pregunta. */
@@ -286,7 +292,7 @@ defineExpose({ followQuestion })
       <ProgressSpinner style="width: 36px; height: 36px" />
       <span>{{ t('preview.host.loadingEngine') }}</span>
     </div>
-    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click="onMountClick" @contextmenu="onMountContextmenu" />
+    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click.capture="onMountClick" @contextmenu="onMountContextmenu" />
   </div>
 </template>
 

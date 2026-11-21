@@ -15,6 +15,15 @@
     "shortcutDelete": "Suppr",
     "undoChangeType": "Changer le type de la question"
   },
+  "sigePreview": {
+    "modeGroup": "Ce que fait un appui sur le téléphone",
+    "modeEdit": "Modifier",
+    "modeTest": "Essayer",
+    "modeEditHint": "Modifier au toucher : toucher une partie du téléphone ouvre son module dans Paramètres (actif)",
+    "modeTestHint": "Essayer : le téléphone fonctionne comme un formulaire normal et ne change rien dans l'éditeur (actif)",
+    "modeEditSwitch": "Passer à « Modifier au toucher » : toucher une partie ouvre son module dans Paramètres",
+    "modeTestSwitch": "Passer à « Essayer » : remplir le formulaire sans changer l'éditeur"
+  },
   "sigePalette": {
     "ariaLabel": "Rechercher des fonctions",
     "placeholder": "Rechercher une fonction ou une question…  (> actions, {'@'} questions)",

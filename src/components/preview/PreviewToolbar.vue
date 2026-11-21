@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 
+import { previewMode, setPreviewMode } from '@/sige/preview/mode' // SIGE
 import { previewZoomPercent, resetPreviewZoom, stepPreviewZoom } from '@/sige/preview/zoom'
 import { useRouter } from 'vue-router'
 
@@ -52,6 +53,31 @@ const openFullPreview = (): void => {
         data-testid="preview-refresh"
         @click="preview.refreshNow()"
       />
+      <!-- SIGE: conmutador «Editar al tocar / Probar» (se recuerda en sige.preview.mode) -->
+      <span class="preset-group sige-mode" role="group" :aria-label="t('sigePreview.modeGroup')" data-testid="sige-preview-mode">
+        <button
+          type="button"
+          class="preset-button sige-mode-btn"
+          :class="{ active: previewMode === 'edit' }"
+          :aria-pressed="previewMode === 'edit'"
+          :title="previewMode === 'edit' ? t('sigePreview.modeEditHint') : t('sigePreview.modeEditSwitch')"
+          data-testid="sige-preview-mode-edit"
+          @click="setPreviewMode('edit')"
+        >
+          <i class="pi pi-pencil" /> {{ t('sigePreview.modeEdit') }}
+        </button>
+        <button
+          type="button"
+          class="preset-button sige-mode-btn"
+          :class="{ active: previewMode === 'test' }"
+          :aria-pressed="previewMode === 'test'"
+          :title="previewMode === 'test' ? t('sigePreview.modeTestHint') : t('sigePreview.modeTestSwitch')"
+          data-testid="sige-preview-mode-test"
+          @click="setPreviewMode('test')"
+        >
+          <i class="pi pi-play" /> {{ t('sigePreview.modeTest') }}
+        </button>
+      </span>
       <span class="sige-zoom" role="group" aria-label="Tamaño del texto" data-testid="sige-zoom">
         <button type="button" class="preset-button" title="Texto más pequeño" aria-label="Texto más pequeño" data-testid="sige-zoom-out" @click="stepPreviewZoom(-1)">A−</button>
         <button type="button" class="sige-zoom-pct" title="Restablecer tamaño" aria-label="Restablecer tamaño del texto" data-testid="sige-zoom-reset" @click="resetPreviewZoom()">{{ previewZoomPercent }}%</button>
@@ -96,6 +122,8 @@ const openFullPreview = (): void => {
 </template>
 
 <style scoped>
+.sige-mode { margin-inline-end: var(--odk-spacing-s); }
+.sige-mode .sige-mode-btn { white-space: nowrap; width: auto; padding: 0 8px; gap: 4px; font-size: 0.72rem; font-weight: 600; }
 .sige-zoom { display: inline-flex; align-items: center; gap: 2px; margin-inline-end: var(--odk-spacing-s); }
 .sige-zoom .preset-button { font-size: 0.72rem; font-weight: 600; min-width: 28px; }
 .sige-zoom-pct { border: none; background: none; color: var(--odk-muted-text-color); font-family: inherit; font-size: 0.7rem; cursor: pointer; padding: 0 2px; }
@@ -115,6 +143,8 @@ const openFullPreview = (): void => {
 
 .preview-actions {
   display: inline-flex;
+  flex-wrap: wrap; /* SIGE: con el conmutador Editar/Probar la barra no cabe en una línea en paneles angostos */
+  justify-content: flex-end;
   align-items: center;
   gap: 4px;
   min-width: 0;

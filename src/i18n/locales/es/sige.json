@@ -15,6 +15,15 @@
     "shortcutDelete": "Supr",
     "undoChangeType": "Cambiar tipo de pregunta"
   },
+  "sigePreview": {
+    "modeGroup": "Qué hace tocar el celular",
+    "modeEdit": "Editar",
+    "modeTest": "Probar",
+    "modeEditHint": "Editar al tocar: tocar una parte del celular abre su módulo en Ajustes (activo)",
+    "modeTestHint": "Probar: el celular funciona como un formulario normal y no cambia nada del editor (activo)",
+    "modeEditSwitch": "Cambiar a «Editar al tocar»: tocar una parte abre su módulo en Ajustes",
+    "modeTestSwitch": "Cambiar a «Probar»: rellenar el formulario sin cambiar el editor"
+  },
   "sigePalette": {
     "ariaLabel": "Buscar funciones",
     "placeholder": "Busca una función o una pregunta…  (> acciones, {'@'} preguntas)",
