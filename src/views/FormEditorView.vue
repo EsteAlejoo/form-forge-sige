@@ -16,6 +16,8 @@ import { applyVariantPreset } from '@/sige/applyVariant'
 import SigeLeftPanel from '@/sige/SigeLeftPanel.vue'
 import { duplicateSelection } from '@/sige/contextMenu/menuActions' // SIGE
 import QuestionContextMenu from '@/sige/contextMenu/QuestionContextMenu.vue' // SIGE
+import { openPalette, togglePalette as toggleCommandPalette } from '@/sige/commands/bridge' // SIGE
+import CommandPalette from '@/sige/commands/CommandPalette.vue' // SIGE
 import type { Variant } from '@/sige/palette/variants'
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
@@ -29,6 +31,7 @@ import { useBreakpoint, useViewportWidth } from '@/composables/useBreakpoint'
 import { useSelectionActions } from '@/composables/useSelectionActions'
 import { flatten } from '@/core/model/ops'
 import { useAppI18n } from '@/i18n'
+import { shortcutMod } from '@/shortcuts' // SIGE
 
 import { useCentralStore } from '@/stores/central'
 import { useEditorStore } from '@/stores/editor'
@@ -235,6 +238,12 @@ const overlayOpen = (): boolean =>
   document.querySelector('.p-overlay-mask, .p-dialog, .p-popover, .p-drawer, .p-menu, .p-select-overlay, .p-multiselect-overlay') !== null
 
 const onGlobalKeydown = (event: KeyboardEvent): void => {
+  if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'k') {
+    // SIGE: Ctrl+K abre/cierra la lupita de funciones (funciona también con el cursor en un campo).
+    event.preventDefault()
+    toggleCommandPalette()
+    return
+  }
   if (event.key === 'Escape' && editor.paletteDrawerOpen) {
     editor.paletteDrawerOpen = false
     return
@@ -348,6 +357,16 @@ const goToCentralSettings = async (): Promise<void> => {
         <span class="form-title" data-testid="editor-form-title">{{ formTitle }}</span>
       </template>
       <template #actions>
+        <!-- SIGE: lupita de funciones (Ctrl+K) -->
+        <Button
+          v-tooltip.bottom="t('sigePalette.openButton', { mod: shortcutMod() })"
+          icon="pi pi-search"
+          severity="secondary"
+          text
+          :aria-label="t('sigePalette.openLabel')"
+          data-testid="command-palette-button"
+          @click="openPalette"
+        />
         <Button
           v-tooltip.bottom="paletteShown ? t('shell.editor.hidePalette') : t('shell.editor.showPalette')"
           icon="pi pi-th-large"
@@ -455,6 +474,7 @@ const goToCentralSettings = async (): Promise<void> => {
     </div>
 
     <EditorDialogs />
+    <CommandPalette /> <!-- SIGE -->
   </div>
 </template>
 

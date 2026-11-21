@@ -14,5 +14,69 @@
     "paste": "Paste",
     "shortcutDelete": "Del",
     "undoChangeType": "Change question type"
+  },
+  "sigePalette": {
+    "ariaLabel": "Search functions",
+    "placeholder": "Search for a function or a question…  (> actions, {'@'} questions)",
+    "openButton": "Search functions ({mod}+K)",
+    "openLabel": "Search functions",
+    "empty": "Nothing matches. Try another word.",
+    "hint": "↑↓ move · Enter run · Esc close · > actions · {'@'} questions",
+    "recent": "Recently used",
+    "error": "That function failed",
+    "addQuestion": "Add question: {name}",
+    "helpType": "Help: {name}",
+    "helpGuide": "Help guide: {name}",
+    "cat": {
+      "edit": "Edit",
+      "preview": "Preview",
+      "appearance": "Appearance",
+      "export": "Export / Import",
+      "form": "Form",
+      "language": "Language",
+      "help": "Help",
+      "add": "Add question",
+      "goto": "Go to question",
+      "settings": "Question settings"
+    },
+    "reason": {
+      "noSelection": "Select a question first",
+      "noForm": "Open a form first",
+      "nothingToUndo": "Nothing to undo",
+      "nothingToRedo": "Nothing to redo",
+      "noClipboard": "Nothing copied yet",
+      "atTop": "Already first",
+      "atBottom": "Already last",
+      "notApplicable": "Does not apply to this question",
+      "alreadyActive": "Already active",
+      "exportHidden": "Disabled by the host application"
+    },
+    "act": {
+      "selectAll": "Select all questions",
+      "zoomOut": "Preview text smaller (A−)",
+      "zoomIn": "Preview text larger (A+)",
+      "zoomReset": "Preview text: reset size",
+      "theme": "Colour scheme: {name}",
+      "accent": "Accent colour: {name}",
+      "language": "App language: {name}",
+      "export": "Export: {name}",
+      "import": "Import a form…"
+    },
+    "set": {
+      "required": "Mark as required",
+      "notRequired": "Make optional (not required)",
+      "readOnly": "Mark as read-only",
+      "notReadOnly": "Make editable (not read-only)",
+      "defaultValue": "Initial value",
+      "relevant": "Show only if… (condition)",
+      "constraint": "Validation rule",
+      "calculation": "Calculation",
+      "choices": "Answer options",
+      "label": "Question text",
+      "hint": "Hint text",
+      "appearance": "Appearance",
+      "name": "Field name",
+      "typeHelp": "Help about this question type"
+    }
   }
 }

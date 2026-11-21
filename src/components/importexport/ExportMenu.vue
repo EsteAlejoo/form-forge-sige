@@ -10,6 +10,7 @@ import type { FormDocument } from '@/core/model/types'
 import { serializeXForm } from '@/core/xform/serializer'
 import { writeXlsForm } from '@/core/xlsform/writer'
 import { useAppI18n } from '@/i18n'
+import { exportRequest } from '@/sige/commands/bridge' // SIGE
 import { listAttachments } from '@/persistence/attachments-repo'
 import { useEmbedStore } from '@/stores/embed'
 import { useFormStore } from '@/stores/form'
@@ -136,6 +137,14 @@ const pick = (action: ExportAction): void => {
   if (form.recordId !== null) ui.setLastExportFormat(form.recordId, action.id)
   action.run()
 }
+
+// SIGE: la lupita (Ctrl+K) pide exportar en un formato; se ejecuta aquí para reusar el bloqueo por errores.
+watch(exportRequest, (id) => {
+  if (id === null) return
+  exportRequest.value = null
+  const action = enabledActions.value.find((a) => a.id === id)
+  if (action !== undefined) pick(action)
+})
 
 /** Missing translation cells across all declared languages (0 when the form
  * declares none — the summary omits the segment entirely then). The core

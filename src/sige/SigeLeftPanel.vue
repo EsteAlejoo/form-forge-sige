@@ -5,6 +5,7 @@ import QuestionPalette from '@/components/palette/QuestionPalette.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
 import { useEditorStore } from '@/stores/editor'
 
+import { propertyTabRequest } from './commands/bridge'
 import type { Variant } from './palette/variants'
 
 /**
@@ -20,6 +21,10 @@ const tab = ref<'add' | 'props'>(editor.selectedNodeId === null ? 'add' : 'props
 
 watch(() => editor.selectedNodeId, (id) => {
   tab.value = id === null ? 'add' : 'props'
+})
+// La lupita (Ctrl+K) pide abrir Ajustes aunque la pregunta ya estuviera seleccionada.
+watch(propertyTabRequest, (req) => {
+  if (req !== null && editor.selectedNodeId !== null) tab.value = 'props'
 })
 </script>
 
