@@ -100,6 +100,8 @@ const onDragEnd = (): void => {
     :animation="150"
     ghost-class="node-ghost"
     target=".node-list"
+    filter=".sige-inline-edit"
+    :prevent-on-filter="false"
     class="node-list-host"
     :class="{ 'node-list-root': props.root, 'node-list-empty': props.list.length === 0 }"
     :data-testid="props.root ? 'canvas-list' : `container-list-${props.parentId}`"
