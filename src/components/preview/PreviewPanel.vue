@@ -7,6 +7,7 @@ import PreviewToolbar from '@/components/preview/PreviewToolbar.vue'
 import SubmissionResultDialog from '@/components/preview/SubmissionResultDialog.vue'
 import { useAppI18n } from '@/i18n'
 import { buildFollowTarget, type RenderedQuestion } from '@/preview/followSelection'
+import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
 import { nodeIdAtRenderedIndex } from '@/sige/preview/selectFromPreview'
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
@@ -28,6 +29,13 @@ const onQuestionClick = (index: number, rendered: RenderedQuestion[]): void => {
   if (id === null) return
   editor.select(id)
   editor.revealNodeId = id
+}
+
+/** SIGE: clic derecho en el celular abre el menú de esa pregunta. */
+const onQuestionContextmenu = (index: number, rendered: RenderedQuestion[], event: MouseEvent): void => {
+  if (form.doc === null) return
+  const id = nodeIdAtRenderedIndex(form.doc, rendered, index)
+  if (id !== null) openQuestionMenu(event, id)
 }
 
 onMounted(() => { preview.start() })
@@ -111,6 +119,7 @@ const startNewInstance = async (): Promise<void> => {
       @submit="onSubmit"
       @loaded="follow(false)"
       @question-click="onQuestionClick"
+      @question-contextmenu="onQuestionContextmenu"
     />
 
     <SubmissionResultDialog

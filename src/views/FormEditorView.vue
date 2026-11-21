@@ -14,6 +14,8 @@ import ExportMenu from '@/components/importexport/ExportMenu.vue'
 import QuestionPalette from '@/components/palette/QuestionPalette.vue'
 import { applyVariantPreset } from '@/sige/applyVariant'
 import SigeLeftPanel from '@/sige/SigeLeftPanel.vue'
+import { duplicateSelection } from '@/sige/contextMenu/menuActions' // SIGE
+import QuestionContextMenu from '@/sige/contextMenu/QuestionContextMenu.vue' // SIGE
 import type { Variant } from '@/sige/palette/variants'
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
@@ -252,6 +254,11 @@ const onGlobalKeydown = (event: KeyboardEvent): void => {
     editor.activeDialog === null && editor.selectedNodeIds.size > 0 && inSelectionScope(event.target)) {
     event.preventDefault()
     selection.deleteSelection()
+  } else if (mod && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'd' && !inInput &&
+    editor.activeDialog === null && editor.selectedNodeIds.size > 0 && inSelectionScope(event.target)) {
+    // SIGE: Ctrl+D duplica la selección (atajo que muestra el menú contextual).
+    event.preventDefault()
+    duplicateSelection(form, editor)
   } else if (mod && event.key.toLowerCase() === 'a' && !inInput && editor.activeDialog === null &&
     inSelectionScope(event.target)) {
     event.preventDefault()
@@ -412,6 +419,7 @@ const goToCentralSettings = async (): Promise<void> => {
         class="canvas-panel"
       >
         <CanvasToolbar />
+        <QuestionContextMenu />
         <main
           class="editor-canvas"
           @click="editor.select(null)"

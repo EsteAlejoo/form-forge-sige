@@ -8,6 +8,7 @@ import { displayText } from '@/core/model/display'
 import { isContainer, type FormNode } from '@/core/model/types'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
+import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 
@@ -207,6 +208,7 @@ onBeforeUnmount(() => {
     @click.stop="onCardClick"
     @focus="onCardFocus"
     @keydown="onCardKeydown"
+    @contextmenu="openQuestionMenu($event, node.id)"
   >
     <div class="node-card-row">
       <Button
