@@ -67,3 +67,6 @@ Pendiente: al construir una función inspirada en un proyecto concreto, agregar 
 Hecho en la rama sigeapp-adaptacion (sin push): menú contextual, valor inicial amigable, edición en línea de la etiqueta, reglas de revisión Kobo (src/sige/lint), lupa Ctrl+K (src/sige/commands), tablas relacionadas fase 1 (src/sige/relaciones: importar tabla y «Traer columna», más profileColumns).
 Hecho también: clic en el celular que lleva a la pestaña/campo de la parte tocada (src/sige/preview/previewParts.ts, detectPart.ts) + conmutador Editar/Probar. Selectores frágiles: asterisco y medios (clases del Vue de web-forms; si fallan, solo selecciona).
 Siguen: motor de sugerencias de origen de datos (usa profileColumns), repeat por opción de catálogo, validación por rango desde tabla, edición en línea en el celular, hoja de atajos, panel de problemas «Ir al problema», historial con Restaurar. Antes: probar en Kobo real instance()/pulldata con 3.000+ filas.
+
+## Decisión 2026-11-25
+Vista previa: por defecto «ajustar a ancho de panel» (preset fill; migración única con clave localStorage sige.preview.init2) y se abre sola al seleccionar un área (FormEditorView.vue). Sin verificar en navegador aún.
