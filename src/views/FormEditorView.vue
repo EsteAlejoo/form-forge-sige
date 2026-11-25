@@ -19,6 +19,7 @@ import QuestionContextMenu from '@/sige/contextMenu/QuestionContextMenu.vue' // 
 import { openPalette, togglePalette as toggleCommandPalette } from '@/sige/commands/bridge' // SIGE
 import CommandPalette from '@/sige/commands/CommandPalette.vue' // SIGE
 import type { Variant } from '@/sige/palette/variants'
+import { previewSync } from '@/sige/preview/sync' // SIGE
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
 import AppHeader from '@/components/shell/AppHeader.vue'
@@ -97,7 +98,7 @@ try {
 } catch { /* sin almacenamiento */ }
 /** SIGE: al seleccionar un área, la vista previa se abre (si estaba cerrada) para mostrarla. */
 watch(() => editor.selectedNodeId, (id) => {
-  if (id !== null && !editor.previewVisible) editor.previewVisible = true
+  if (id !== null && previewSync.value && !editor.previewVisible) editor.previewVisible = true
 })
 
 /**

@@ -11,6 +11,7 @@ import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
 import type { PartHit } from '@/sige/preview/detectPart' // SIGE
 import { handlePreviewClick } from '@/sige/preview/openFromPreview' // SIGE
 import { nodeIdAtRenderedIndex } from '@/sige/preview/selectFromPreview'
+import { previewSync } from '@/sige/preview/sync' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 import { usePreviewStore } from '@/stores/preview'
@@ -45,7 +46,7 @@ onMounted(() => { preview.start() })
  * and a false return (unresolved match) is deliberately ignored. */
 const follow = (flash: boolean): void => {
   void nextTick(() => {
-    if (hostRef.value === null || editor.selectedNodeId === null || form.doc === null) return
+    if (!previewSync.value || hostRef.value === null || editor.selectedNodeId === null || form.doc === null) return
     const target = buildFollowTarget(form.doc, editor.selectedNodeId)
     if (target === null) return
     hostRef.value.followQuestion(target, { flash })

@@ -2,6 +2,7 @@
 import Button from 'primevue/button'
 
 import { previewMode, setPreviewMode } from '@/sige/preview/mode' // SIGE
+import { previewSync, togglePreviewSync } from '@/sige/preview/sync'
 import { previewZoomPercent, resetPreviewZoom, stepPreviewZoom } from '@/sige/preview/zoom'
 import { useRouter } from 'vue-router'
 
@@ -78,6 +79,18 @@ const openFullPreview = (): void => {
           <i class="pi pi-play" /> {{ t('sigePreview.modeTest') }}
         </button>
       </span>
+      <!-- SIGE: sincronizar constructor ↔ vista previa en los dos sentidos -->
+      <button
+        type="button"
+        class="preset-button sige-sync"
+        :class="{ active: previewSync }"
+        :aria-pressed="previewSync"
+        :title="previewSync ? t('sigePreview.syncOnHint') : t('sigePreview.syncOffHint')"
+        data-testid="sige-preview-sync"
+        @click="togglePreviewSync()"
+      >
+        <i class="pi pi-arrow-right-arrow-left" /> {{ t('sigePreview.sync') }}
+      </button>
       <span class="sige-zoom" role="group" aria-label="Tamaño del texto" data-testid="sige-zoom">
         <button type="button" class="preset-button" title="Texto más pequeño" aria-label="Texto más pequeño" data-testid="sige-zoom-out" @click="stepPreviewZoom(-1)">A−</button>
         <button type="button" class="sige-zoom-pct" title="Restablecer tamaño" aria-label="Restablecer tamaño del texto" data-testid="sige-zoom-reset" @click="resetPreviewZoom()">{{ previewZoomPercent }}%</button>
@@ -124,6 +137,7 @@ const openFullPreview = (): void => {
 <style scoped>
 .sige-mode { margin-inline-end: var(--odk-spacing-s); }
 .sige-mode .sige-mode-btn { white-space: nowrap; width: auto; padding: 0 8px; gap: 4px; font-size: 0.72rem; font-weight: 600; }
+.sige-sync { width: auto; padding: 0 8px; gap: 4px; white-space: nowrap; font-weight: 600; font-size: 0.72rem; border: 1px solid var(--odk-border-color); border-radius: var(--odk-radius); margin-inline-end: var(--odk-spacing-s); }
 .sige-zoom { display: inline-flex; align-items: center; gap: 2px; margin-inline-end: var(--odk-spacing-s); }
 .sige-zoom .preset-button { font-size: 0.72rem; font-weight: 600; min-width: 28px; }
 .sige-zoom-pct { border: none; background: none; color: var(--odk-muted-text-color); font-family: inherit; font-size: 0.7rem; cursor: pointer; padding: 0 2px; }

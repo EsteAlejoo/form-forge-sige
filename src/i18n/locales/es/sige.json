@@ -16,6 +16,9 @@
     "undoChangeType": "Cambiar tipo de pregunta"
   },
   "sigePreview": {
+    "sync": "Sincronizar",
+    "syncOnHint": "Sincronizado: seleccionar en el constructor mueve la vista previa y tocar la vista previa selecciona (clic para apagar)",
+    "syncOffHint": "Sin sincronizar: la vista previa y el constructor van por separado (clic para encender)",
     "modeGroup": "Qué hace tocar el celular",
     "modeEdit": "Editar",
     "modeTest": "Probar",

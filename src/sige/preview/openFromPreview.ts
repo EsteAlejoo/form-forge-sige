@@ -9,6 +9,7 @@ import type { useUiStore } from '@/stores/ui'
 import { showQuestionSettings } from '../commands/bridge'
 import type { PartHit } from './detectPart'
 import { previewMode } from './mode'
+import { previewSync } from './sync'
 import { choiceIndexFor, containerIdForPanel, targetForPart, type PartContext } from './previewParts'
 import { nodeIdAtRenderedIndex } from './selectFromPreview'
 
@@ -22,7 +23,7 @@ export const handlePreviewClick = (
 ): void => {
   const { form, editor, ui } = stores
   // «Probar»: el celular funciona como un formulario normal, no se toca el editor.
-  if (previewMode.value === 'test' || form.doc === null) return
+  if (previewMode.value === 'test' || !previewSync.value || form.doc === null) return
   const id = index !== null
     ? nodeIdAtRenderedIndex(form.doc, rendered, index)
     : hit?.panel != null ? containerIdForPanel(form.doc, hit.panel.titles, hit.panel.ordinal) : null

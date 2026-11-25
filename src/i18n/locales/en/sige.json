@@ -16,6 +16,9 @@
     "undoChangeType": "Change question type"
   },
   "sigePreview": {
+    "sync": "Sync",
+    "syncOnHint": "Synced: selecting in the builder moves the preview and tapping the preview selects (click to turn off)",
+    "syncOffHint": "Not synced: preview and builder work separately (click to turn on)",
     "modeGroup": "What tapping the phone does",
     "modeEdit": "Edit",
     "modeTest": "Try",

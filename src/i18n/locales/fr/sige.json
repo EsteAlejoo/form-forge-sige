@@ -16,6 +16,9 @@
     "undoChangeType": "Changer le type de la question"
   },
   "sigePreview": {
+    "sync": "Synchroniser",
+    "syncOnHint": "Synchronisé : sélectionner dans le constructeur déplace l'aperçu et toucher l'aperçu sélectionne (clic pour désactiver)",
+    "syncOffHint": "Non synchronisé : l'aperçu et le constructeur sont indépendants (clic pour activer)",
     "modeGroup": "Ce que fait un appui sur le téléphone",
     "modeEdit": "Modifier",
     "modeTest": "Essayer",
