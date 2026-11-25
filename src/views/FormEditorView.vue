@@ -88,12 +88,17 @@ const paletteWidthPx = computed(() => (sigeLeft.value ? Math.max(ui.paletteWidth
 watch(() => form.recordId, () => {
   if (sigeLeft.value) editor.previewVisible = true
 }, { immediate: true, flush: 'post' })
+// SIGE: por defecto «ajustar a ancho de panel» (fill); se pasa una sola vez a fill para quien quedó en celular.
 try {
-  if (localStorage.getItem('sige.preview.init') === null) {
-    ui.previewPreset = 'phone'
-    localStorage.setItem('sige.preview.init', '1')
+  if (localStorage.getItem('sige.preview.init2') === null) {
+    ui.previewPreset = 'fill'
+    localStorage.setItem('sige.preview.init2', '1')
   }
 } catch { /* sin almacenamiento */ }
+/** SIGE: al seleccionar un área, la vista previa se abre (si estaba cerrada) para mostrarla. */
+watch(() => editor.selectedNodeId, (id) => {
+  if (id !== null && !editor.previewVisible) editor.previewVisible = true
+})
 
 /**
  * Non-destructive palette auto-tuck (wide mode): when the docked panels
