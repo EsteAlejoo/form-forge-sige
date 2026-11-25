@@ -70,3 +70,6 @@ Siguen: motor de sugerencias de origen de datos (usa profileColumns), repeat por
 
 ## Decisión 2026-11-25
 Vista previa: por defecto «ajustar a ancho de panel» (preset fill; migración única con clave localStorage sige.preview.init2) y se abre sola al seleccionar un área (FormEditorView.vue). Sin verificar en navegador aún.
+
+## Decisión 2026-11-25 (2)
+Botón «Sincronizar» en la barra de la vista previa (src/sige/preview/sync.ts, localStorage sige.preview.sync, por defecto encendido): gobierna los dos sentidos (seleccionar en el constructor → desplaza la vista previa y la abre; tocar la vista previa → selecciona). Formulario Kobo (C:\sigeapp\kobo\build_xlsform.py): en observaciones cuantificables las casillas dicen «Escala 0..4» (sin «NA»); aviso de suma ≠ 10 reescrito («Contaste X estructuras…»). `${campo}` literal en la vista previa del constructor es normal: no calcula; en Kobo sí.
