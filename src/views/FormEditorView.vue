@@ -13,6 +13,7 @@ import GuideTrigger from '@/components/help/GuideTrigger.vue'
 import ExportMenu from '@/components/importexport/ExportMenu.vue'
 import QuestionPalette from '@/components/palette/QuestionPalette.vue'
 import { applyVariantPreset } from '@/sige/applyVariant'
+import { installVariantDrop } from '@/sige/palette/variantDrop' // SIGE
 import SigeLeftPanel from '@/sige/SigeLeftPanel.vue'
 import { duplicateSelection } from '@/sige/contextMenu/menuActions' // SIGE
 import QuestionContextMenu from '@/sige/contextMenu/QuestionContextMenu.vue' // SIGE
@@ -304,7 +305,9 @@ const onDocumentPaste = (event: ClipboardEvent): void => {
   if (clipboardEventAllowed(event)) selection.handlePasteEvent(event)
 }
 
+let removeVariantDrop: (() => void) | null = null
 onMounted(() => {
+  removeVariantDrop = installVariantDrop(form, editor) // SIGE: arrastrar tarjetas al esquema o a la vista previa
   window.addEventListener('beforeunload', beforeUnload)
   window.addEventListener('keydown', onGlobalKeydown)
   document.addEventListener('copy', onDocumentCopy)
@@ -312,6 +315,7 @@ onMounted(() => {
   document.addEventListener('paste', onDocumentPaste)
 })
 onBeforeUnmount(() => {
+  removeVariantDrop?.()
   window.removeEventListener('beforeunload', beforeUnload)
   window.removeEventListener('keydown', onGlobalKeydown)
   document.removeEventListener('copy', onDocumentCopy)

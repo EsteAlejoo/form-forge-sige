@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
+import { endVariantDrag, startVariantDrag } from './variantDrop'
 import { CATEGORIES, type Variant, variantsOf } from './variants'
 
 /**
@@ -42,8 +43,11 @@ const variants = computed(() => (open.value === null ? [] : variantsOf(open.valu
           :key="x.id"
           class="cp-variant"
           :data-testid="`cp-variant-${x.id}`"
-          :title="x.description"
+          :title="`${x.description} · arrástrala al esquema o a la vista previa`"
+          draggable="true"
           @click="emit('add', x)"
+          @dragstart="startVariantDrag(x, $event)"
+          @dragend="endVariantDrag"
         >
           <span class="cp-sample" aria-hidden="true">
             <template v-if="x.sample === 'text'"><i class="m-line" /></template>
@@ -83,6 +87,12 @@ const variants = computed(() => (open.value === null ? [] : variantsOf(open.valu
     </template>
   </div>
 </template>
+
+<style>
+/* Indicador de dónde caerá la tarjeta arrastrada (esquema y vista previa; global porque el motor ODK dibuja la vista previa). */
+.sige-drop-before { box-shadow: 0 -3px 0 0 var(--odk-primary-color, #e91e63) !important; }
+.sige-drop-after { box-shadow: 0 3px 0 0 var(--odk-primary-color, #e91e63) !important; }
+</style>
 
 <style scoped>
 .cp { padding: var(--odk-spacing-m); overflow-y: auto; flex: 1; }

@@ -77,3 +77,6 @@ Botón «Sincronizar» en la barra de la vista previa (src/sige/preview/sync.ts,
 
 ## Decisión 2026-11-26
 Barra de la vista previa: «Sincronizar» es solo icono (texto «Sincronizar paneles» en hover); el ancho (celular/tablet/panel) es un desplegable (testids preview-width-menu y preview-preset-<x>; e2e actualizado). Menú contextual: «Copiar estilo / Pegar estilo» = copia body.appearance; el destino conserva solo lo que su tipo admite; contenedor↔pregunta no se transfiere. Sin prueba unitaria aún (adaptAppearance no exportada).
+
+## Decisión 2026-11-26 (2)
+Arrastrar tarjetas de «Elementos» (paleta por categorías) al esquema o a la vista previa: src/sige/palette/variantDrop.ts (HTML5 nativo, sin dependencias; inserta antes/después según la mitad bajo el cursor; vacío = al final; indicador sige-drop-before/after). Probado con eventos simulados en navegador. La paleta «Lista» ya arrastraba al esquema (SortableJS original) pero no a la vista previa. Selector de apariencia (AppearancePicker): nombres amigables (Botón sin círculo = no-buttons, Selección rápida = quick, Escala Likert = likert), combinación «Botones en fila» (columns-pack no-buttons) y nombres en español para todas las apariencias. Especie vacía en el ejemplo = comportamiento correcto del filtro en cascada (requiere elegir Agrícola); se agregó hint «Primero elige la agrícola» en build_xlsform.py.
