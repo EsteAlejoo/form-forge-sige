@@ -1,7 +1,9 @@
 import { findNode, locateNode, topMostNodes } from '@/core/model/ops'
 import { ref } from 'vue'
 
-import type { FormDocument, FormNode, QuestionNode } from '@/core/model/types'
+import { createNode } from '@/core/model/factory'
+import { primaryLang } from '@/core/model/translations'
+import type { FormDocument, FormNode, GroupNode, QuestionNode } from '@/core/model/types'
 import { getAllQuestionTypes, getQuestionType, type QuestionTypeDefinition } from '@/core/registry/question-types'
 import { translate } from '@/i18n'
 import type { useEditorStore } from '@/stores/editor'
@@ -156,6 +158,45 @@ export const pasteStyle = (form: FormStore, editor: EditorStore): void => {
       node.body.appearance = next
     }
   })
+}
+
+/**
+ * «Empezar pantalla nueva aquí» (separador de pantallas, idea de los saltos de página de SurveyJS/Typeform):
+ * esta pregunta y todas las que le siguen en su lista pasan a una pantalla nueva (grupo `field-list`),
+ * que queda justo después. Si la pregunta ya está dentro de una pantalla, se parte esa pantalla en dos.
+ * Una sola entrada de deshacer. Devuelve false si no hay nada que separar (ya es la primera de su pantalla).
+ */
+const isScreen = (n: FormNode | null): boolean => n !== null && n.kind === 'group' && n.body.appearance?.split(/\s+/).includes('field-list') === true
+
+export const canSplitScreen = (doc: FormDocument, nodeId: string): boolean => {
+  const loc = locateNode(doc, nodeId)
+  return loc !== null && !(loc.index === 0 && (loc.parent === null || isScreen(loc.parent)))
+}
+
+export const splitScreenAt = (form: FormStore, editor: EditorStore, nodeId: string): void => {
+  let newId: string | null = null
+  form.mutate(translate('sigeMenu.undoSplitScreen'), (d) => {
+    const loc = locateNode(d, nodeId)
+    if (loc === null || !canSplitScreen(d, nodeId)) return
+    const siblings = loc.parent === null ? d.children : loc.parent.children
+    const moved = siblings.splice(loc.index)
+    const screen = createNode(d, 'group') as GroupNode
+    screen.body.appearance = 'field-list'
+    screen.label = { [primaryLang(d)]: translate('sigeMenu.newScreenLabel') }
+    screen.children = moved
+    if (isScreen(loc.parent)) {
+      const up = locateNode(d, loc.parent!.id)
+      const list = up === null ? d.children : (up.parent === null ? d.children : up.parent.children)
+      list.splice((up?.index ?? list.length - 1) + 1, 0, screen)
+    } else {
+      siblings.push(screen)
+    }
+    newId = screen.id
+  })
+  if (newId !== null) {
+    editor.select(newId)
+    editor.revealNodeId = newId
+  }
 }
 
 /** Cambia el tipo en una sola entrada de deshacer; limpia apariencia/parámetros que el tipo nuevo no admite. */
