@@ -83,3 +83,11 @@ Arrastrar tarjetas de «Elementos» (paleta por categorías) al esquema o a la v
 
 ## Decisión 2026-11-26 (3)
 Separador de pantallas: clic derecho en una pregunta → «Empezar pantalla nueva aquí» (menuActions.splitScreenAt/canSplitScreen). Esa pregunta y las siguientes de su lista pasan a un grupo field-list nuevo, justo después; si ya estaba en una pantalla, la parte en dos; desactivado si es la primera de su pantalla. Probado en navegador (Ubicación → Ubicación + Pantalla). Ya existía la tarjeta «Pantalla nueva» (Estructura). Idea de procedencia: saltos de página de SurveyJS/Typeform (solo idea). Pendiente: botón visible en el esquema entre tarjetas y «Juntar pantallas».
+
+## Plan 2026-11-26: botón «+» estilo Elementor (analizado, NO construido; falta OK del usuario)
+Orden de construcción propuesto: 1 estructura (pantallas) → 2 títulos/avisos → 3 preguntas.
+```mermaid
+flowchart LR
+  A[1 Estructura: + Agregar pantalla] --> B[2 Títulos: + Título o aviso] --> C[3 Preguntas: + Agregar pregunta]
+```
+Hallazgo: la tarjeta seleccionada hoy solo ofrece duplicar/eliminar (TreeNodeCard.vue, .node-actions); agregar antes/después y mover existen solo en el clic derecho (oculto). Piezas: (a) estado vacío con «＋ Agregar pantalla»; (b) línea con «＋» al pasar el mouse entre tarjetas; (c) barra flotante de la tarjeta seleccionada: ↑ ↓ ＋arriba ＋abajo duplicar eliminar ⋮; (d) un solo selector de tipo reutilizable (categoría → variante) que reuse variantDrop.insert. Sin dependencias nuevas. Idea de Elementor (GPL): solo idea.
