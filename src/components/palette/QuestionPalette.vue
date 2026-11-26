@@ -9,7 +9,19 @@ import { groupTypesBySearch } from '@/help/search'
 import { useAppI18n } from '@/i18n'
 import { useEditorStore } from '@/stores/editor'
 
-const emit = defineEmits<{ add: [type: string] }>()
+import CategoryPalette from '@/sige/palette/CategoryPalette.vue'
+import type { Variant } from '@/sige/palette/variants'
+
+const emit = defineEmits<{ add: [type: string], addVariant: [variant: Variant] }>()
+
+// SigeApp: la paleta por categorías es la vista por defecto; la lista original sigue disponible.
+const PALETTE_MODE_KEY = 'sige.palette.mode'
+const paletteMode = ref<'cards' | 'list'>(
+  (typeof localStorage !== 'undefined' && localStorage.getItem(PALETTE_MODE_KEY) === 'list') ? 'list' : 'cards')
+const setPaletteMode = (m: 'cards' | 'list'): void => {
+  paletteMode.value = m
+  try { localStorage.setItem(PALETTE_MODE_KEY, m) } catch { /* sin almacenamiento */ }
+}
 
 const { t } = useAppI18n()
 const editor = useEditorStore()
@@ -30,7 +42,12 @@ const cloneAsType = (def: QuestionTypeDefinition): { paletteType: string } =>
 
 <template>
   <aside class="palette" :aria-label="t('palette.questionPalette.ariaLabel')" data-testid="palette">
-    <div class="palette-search">
+    <div class="sige-mode">
+      <button :class="{ on: paletteMode === 'cards' }" data-testid="palette-mode-cards" @click="setPaletteMode('cards')">Tarjetas</button>
+      <button :class="{ on: paletteMode === 'list' }" data-testid="palette-mode-list" @click="setPaletteMode('list')">Lista</button>
+    </div>
+    <CategoryPalette v-if="paletteMode === 'cards'" @add="emit('addVariant', $event)" />
+    <div v-if="paletteMode === 'list'" class="palette-search">
       <InputText
         v-model="search"
         :placeholder="t('palette.questionPalette.searchPlaceholder')"
@@ -39,7 +56,7 @@ const cloneAsType = (def: QuestionTypeDefinition): { paletteType: string } =>
         data-testid="palette-search"
       />
     </div>
-    <div class="palette-groups">
+    <div v-if="paletteMode === 'list'" class="palette-groups">
       <section v-for="group in paletteLists" :key="group.category" class="palette-group">
         <h3 class="palette-group-title">{{ group.label }}</h3>
         <VueDraggable
@@ -83,6 +100,10 @@ const cloneAsType = (def: QuestionTypeDefinition): { paletteType: string } =>
   background: var(--builder-panel-bg);
   border-inline-end: var(--builder-panel-border);
 }
+
+.sige-mode { display: flex; gap: 4px; padding: var(--odk-spacing-s) var(--odk-spacing-m) 0; }
+.sige-mode button { flex: 1; border: 1px solid var(--odk-border-color, #d5dbe3); border-radius: 8px; background: none; color: var(--odk-text-color); font-family: inherit; font-size: 0.75rem; padding: 3px 6px; cursor: pointer; }
+.sige-mode button.on { background: var(--odk-primary-lighter-background-color); border-color: var(--odk-primary-color); color: var(--odk-primary-text-color, var(--odk-primary-color)); }
 
 .palette-search {
   padding: var(--odk-spacing-m);

@@ -1,0 +1,47 @@
+{
+  "sigeTables": {
+    "import": {
+      "button": "Import table…",
+      "title": "Import table as a list",
+      "intro": "Choose a .csv or .xlsx file. Its columns become the options of a new list; the columns you do not use as name or label stay as extra columns.",
+      "pickFile": "Choose file",
+      "fileName": "File: {name}",
+      "sheet": "Sheet",
+      "listName": "List name",
+      "nameColumn": "Column for name (unique code)",
+      "labelColumn": "Column for label (what people see)",
+      "sameAsName": "Same as name",
+      "keyTag": "unique",
+      "preview": "Preview: first {shown} of {total} rows",
+      "extras": "Extra columns: {columns}",
+      "noExtras": "No extra columns: every column is used as name or label.",
+      "warnEmpty": "{count} empty value(s) in the name column: a name is generated from the label.",
+      "warnDuplicate": "{count} repeated value(s) in the name column: the later ones get a _2, _3 suffix.",
+      "warnUnsafe": "{count} name(s) will be cleaned (accents, spaces, symbols).",
+      "warnSizePreview": "More than {limit} rows: the preview may be slow.",
+      "warnSizeKobo": "More than {limit} rows: Kobo recommends an attached CSV file instead of an internal list.",
+      "errEmpty": "The file has no rows.",
+      "errRead": "The file could not be read.",
+      "errListInvalid": "Use letters, numbers and underscores; start with a letter or underscore.",
+      "errListExists": "A list named {name} already exists.",
+      "create": "Create list",
+      "cancel": "Cancel",
+      "undo": "Import table as list"
+    },
+    "lookup": {
+      "title": "Bring a column from a table",
+      "origin": "Source question",
+      "originPlaceholder": "Choose a select_one question",
+      "column": "Column to bring",
+      "columnPlaceholder": "Choose a column",
+      "noOrigins": "No select_one question uses a list with extra columns. Import a table first (Choice lists, Import table).",
+      "replaces": "This replaces the calculation written now (Ctrl+Z undoes it).",
+      "example": "Example: {field} = {name} gives {column} = {value}",
+      "undo": "Bring column from table",
+      "listMissing": "The list {list} does not exist in this form.",
+      "columnMissing": "The list {list} has no column {column}.",
+      "originMissing": "The question {field} does not exist.",
+      "originOtherList": "The question {field} uses a different list than {list}."
+    }
+  }
+}

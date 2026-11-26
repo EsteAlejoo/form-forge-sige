@@ -8,7 +8,7 @@ import Textarea from 'primevue/textarea'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { computed, defineAsyncComponent, onMounted, ref, shallowRef, useTemplateRef, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import CentralDrawerToggle from '@/components/central/CentralDrawerToggle.vue'
 import LibraryCentralDrawer from '@/components/central/LibraryCentralDrawer.vue'
@@ -22,6 +22,7 @@ import { formatVersion, languageCodes } from '@/core/model/library-display'
 import { useAppI18n } from '@/i18n'
 import type { FormRecord, TemplateRecord } from '@/persistence/db'
 import * as templatesRepo from '@/persistence/templates-repo'
+import EjemplosAgricolas from '@/sige/ejemplos/EjemplosAgricolas.vue'
 import { useCentralStore } from '@/stores/central'
 import { useEditorStore } from '@/stores/editor'
 import { useEmbedStore } from '@/stores/embed'
@@ -42,6 +43,7 @@ const central = useCentralStore()
 // Embed mode has no library chrome, but guard the toggle to match AppHeader.
 const embed = useEmbedStore()
 const router = useRouter()
+const route = useRoute() // SIGE
 const confirm = useConfirm()
 const toast = useToast()
 const { t } = useAppI18n()
@@ -56,6 +58,13 @@ onMounted(() => {
 })
 
 const importVisible = ref(false)
+// SIGE: la lupita del editor (Ctrl+K → Importar) llega con ?import=1 y abre el diálogo de importar.
+onMounted(() => {
+  if (route.query.import === '1') {
+    importVisible.value = true
+    void router.replace({ name: 'library' })
+  }
+})
 const centralVisible = ref(false)
 const newFormVisible = ref(false)
 
@@ -306,6 +315,7 @@ const languageBadge = (record: FormRecord): string =>
     </header>
 
     <main class="library-main">
+      <EjemplosAgricolas v-if="!embed.active" />
       <div v-if="workspace.loading" class="library-empty">
         <ProgressSpinner style="width: 40px; height: 40px" />
       </div>

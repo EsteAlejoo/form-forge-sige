@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Select from 'primevue/select'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import BasicSection from '@/components/properties/BasicSection.vue'
 import ChoicesSection from '@/components/properties/ChoicesSection.vue'
@@ -12,6 +12,7 @@ import { useEditingLanguage } from '@/composables/useEditingLanguage'
 import { useTypeLabels } from '@/composables/useTypeLabels'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
+import { propertyTabRequest } from '@/sige/commands/bridge' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 
@@ -27,6 +28,26 @@ const form = useFormStore()
 const editor = useEditorStore()
 
 const node = computed(() => form.getNode(editor.selectedNodeId))
+
+// SIGE: pestañas estilo Elementor (se recuerda la última usada).
+type PTab = 'content' | 'rules' | 'adv'
+const PTAB_KEY = 'sige.props.tab'
+const readTab = (): PTab => {
+  try { const v = localStorage.getItem(PTAB_KEY); if (v === 'rules' || v === 'adv') return v } catch { /* sin almacenamiento */ }
+  return 'content'
+}
+const ptab = ref<PTab>(readTab())
+const setTab = (t: PTab): void => {
+  ptab.value = t
+  try { localStorage.setItem(PTAB_KEY, t) } catch { /* sin almacenamiento */ }
+}
+// SIGE: la lupita (Ctrl+K) pide abrir una pestaña concreta.
+watch(propertyTabRequest, (req) => { if (req !== null) setTab(req.tab) })
+const PTABS: Array<{ id: PTab, label: string, icon: string }> = [
+  { id: 'content', label: 'Contenido', icon: 'pi pi-pencil' },
+  { id: 'rules', label: 'Datos y reglas', icon: 'pi pi-link' },
+  { id: 'adv', label: 'Avanzado', icon: 'pi pi-cog' },
+]
 const def = computed(() => {
   const n = node.value
   if (n === null) return undefined
@@ -89,25 +110,46 @@ const languages = computed(() => form.doc?.languages ?? [])
           @update:model-value="editor.displayLanguage = $event"
         />
       </div>
+      <div class="sige-ptabs" role="tablist" data-testid="sige-ptabs">
+        <button
+          v-for="x in PTABS"
+          :key="x.id"
+          role="tab"
+          :aria-selected="ptab === x.id"
+          :class="{ on: ptab === x.id }"
+          :data-testid="`sige-ptab-${x.id}`"
+          @click="setTab(x.id)"
+        >
+          <i :class="x.icon" /> {{ x.label }}
+        </button>
+      </div>
       <div class="property-sections">
-        <PropSection :title="t('properties.panel.sectionBasics')" section-key="basics">
-          <BasicSection :key="`basic-${node.id}`" :node="node" />
+        <PropSection v-show="ptab === 'content'" :title="t('properties.panel.sectionBasics')" section-key="basics">
+          <BasicSection :key="`basic-${node.id}`" :node="node" part="content" />
         </PropSection>
-        <PropSection v-if="hasTypeConfig(def)" :title="t('properties.panel.sectionAppearance')" section-key="appearance">
+        <PropSection v-if="hasTypeConfig(def)" v-show="ptab === 'content'" :title="t('properties.panel.sectionAppearance')" section-key="appearance">
           <TypeConfigSection :key="`config-${node.id}`" :node="node" />
+        </PropSection>
+        <PropSection v-show="ptab === 'rules'" title="Valor y obligatoriedad" section-key="rules-basic">
+          <BasicSection :key="`rules-${node.id}`" :node="node" part="rules" />
+        </PropSection>
+        <PropSection v-show="ptab === 'adv'" title="Identificación" section-key="adv-basic">
+          <BasicSection :key="`adv-${node.id}`" :node="node" part="adv" />
         </PropSection>
         <PropSection
           v-if="node.kind === 'question' && def?.requiresChoices"
+          v-show="ptab === 'rules'"
           :title="t('properties.panel.sectionChoices')"
           section-key="choices"
         >
           <ChoicesSection :key="`choices-${node.id}`" :node="node" />
         </PropSection>
-        <PropSection :title="t('properties.panel.sectionLogic')" section-key="logic">
+        <PropSection v-show="ptab === 'rules'" :title="t('properties.panel.sectionLogic')" section-key="logic">
           <LogicSection :key="`logic-${node.id}`" :node="node" />
         </PropSection>
         <PropSection
           v-if="form.doc?.entities !== undefined && node.kind === 'question' && canSaveTo(node, def)"
+          v-show="ptab === 'adv'"
           :title="t('properties.panel.sectionEntity')"
           section-key="entity"
         >
@@ -215,6 +257,33 @@ const languages = computed(() => form.doc?.languages ?? [])
 .editing-language-select {
   flex: 1;
   min-width: 0;
+}
+
+.sige-ptabs {
+  display: flex;
+  border-bottom: var(--builder-panel-border);
+}
+
+.sige-ptabs button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--odk-spacing-m) var(--odk-spacing-s);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--odk-muted-text-color);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.sige-ptabs button.on {
+  color: var(--odk-primary-text-color, var(--odk-primary-color));
+  border-bottom-color: var(--odk-primary-color);
 }
 
 .property-sections {

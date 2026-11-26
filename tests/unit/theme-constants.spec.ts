@@ -99,9 +99,9 @@ describe('defaults', () => {
     expect(asScheme).toBe('system')
   })
 
-  it('DEFAULT_ACCENT is a valid accent id and is purple', () => {
+  it('DEFAULT_ACCENT is a valid accent id and is rose (SIGE)', () => {
     expect(isAccentId(DEFAULT_ACCENT)).toBe(true)
-    expect(DEFAULT_ACCENT).toBe('purple')
+    expect(DEFAULT_ACCENT).toBe('rose')
     expect(ACCENT_IDS).toContain(DEFAULT_ACCENT)
   })
 })

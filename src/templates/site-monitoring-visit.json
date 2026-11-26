@@ -27,7 +27,11 @@
       "id": "site_monitoring_visit_n2",
       "name": "visit_date",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -41,7 +45,11 @@
       "id": "site_monitoring_visit_n3",
       "name": "site_name",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -83,7 +91,11 @@
       "id": "site_monitoring_visit_n6",
       "name": "visit_type",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -142,7 +154,11 @@
       "id": "site_monitoring_visit_n10",
       "name": "issues_found",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",

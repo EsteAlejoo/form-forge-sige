@@ -6,7 +6,12 @@ import PreviewHost from '@/components/preview/PreviewHost.vue'
 import PreviewToolbar from '@/components/preview/PreviewToolbar.vue'
 import SubmissionResultDialog from '@/components/preview/SubmissionResultDialog.vue'
 import { useAppI18n } from '@/i18n'
-import { buildFollowTarget } from '@/preview/followSelection'
+import { buildFollowTarget, type RenderedQuestion } from '@/preview/followSelection'
+import { openQuestionMenu } from '@/sige/contextMenu/menuState' // SIGE
+import type { PartHit } from '@/sige/preview/detectPart' // SIGE
+import { handlePreviewClick } from '@/sige/preview/openFromPreview' // SIGE
+import { nodeIdAtRenderedIndex } from '@/sige/preview/selectFromPreview'
+import { previewSync } from '@/sige/preview/sync' // SIGE
 import { useEditorStore } from '@/stores/editor'
 import { useFormStore } from '@/stores/form'
 import { usePreviewStore } from '@/stores/preview'
@@ -20,6 +25,18 @@ const editor = useEditorStore()
 
 const hostRef = ref<InstanceType<typeof PreviewHost> | null>(null)
 
+/** SIGE: tocar el celular selecciona la pregunta y lleva al módulo de la parte tocada (modo «Probar»: nada). */
+const onQuestionClick = (index: number | null, rendered: RenderedQuestion[], hit: PartHit | null): void => {
+  handlePreviewClick(index, rendered, hit, { form, editor, ui })
+}
+
+/** SIGE: clic derecho en el celular abre el menú de esa pregunta. */
+const onQuestionContextmenu = (index: number, rendered: RenderedQuestion[], event: MouseEvent): void => {
+  if (form.doc === null) return
+  const id = nodeIdAtRenderedIndex(form.doc, rendered, index)
+  if (id !== null) openQuestionMenu(event, id)
+}
+
 onMounted(() => { preview.start() })
 
 /** Scroll the preview to the question matching the canvas selection.
@@ -29,7 +46,7 @@ onMounted(() => { preview.start() })
  * and a false return (unresolved match) is deliberately ignored. */
 const follow = (flash: boolean): void => {
   void nextTick(() => {
-    if (hostRef.value === null || editor.selectedNodeId === null || form.doc === null) return
+    if (!previewSync.value || hostRef.value === null || editor.selectedNodeId === null || form.doc === null) return
     const target = buildFollowTarget(form.doc, editor.selectedNodeId)
     if (target === null) return
     hostRef.value.followQuestion(target, { flash })
@@ -100,6 +117,8 @@ const startNewInstance = async (): Promise<void> => {
       @engine-error="preview.reportEngineError"
       @submit="onSubmit"
       @loaded="follow(false)"
+      @question-click="onQuestionClick"
+      @question-contextmenu="onQuestionContextmenu"
     />
 
     <SubmissionResultDialog

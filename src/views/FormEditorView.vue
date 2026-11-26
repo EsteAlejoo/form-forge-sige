@@ -12,6 +12,15 @@ import GuideCallout from '@/components/help/GuideCallout.vue'
 import GuideTrigger from '@/components/help/GuideTrigger.vue'
 import ExportMenu from '@/components/importexport/ExportMenu.vue'
 import QuestionPalette from '@/components/palette/QuestionPalette.vue'
+import { applyVariantPreset } from '@/sige/applyVariant'
+import { installVariantDrop } from '@/sige/palette/variantDrop' // SIGE
+import SigeLeftPanel from '@/sige/SigeLeftPanel.vue'
+import { duplicateSelection } from '@/sige/contextMenu/menuActions' // SIGE
+import QuestionContextMenu from '@/sige/contextMenu/QuestionContextMenu.vue' // SIGE
+import { openPalette, togglePalette as toggleCommandPalette } from '@/sige/commands/bridge' // SIGE
+import CommandPalette from '@/sige/commands/CommandPalette.vue' // SIGE
+import type { Variant } from '@/sige/palette/variants'
+import { previewSync } from '@/sige/preview/sync' // SIGE
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import PropertyPanel from '@/components/properties/PropertyPanel.vue'
 import AppHeader from '@/components/shell/AppHeader.vue'
@@ -24,6 +33,7 @@ import { useBreakpoint, useViewportWidth } from '@/composables/useBreakpoint'
 import { useSelectionActions } from '@/composables/useSelectionActions'
 import { flatten } from '@/core/model/ops'
 import { useAppI18n } from '@/i18n'
+import { shortcutMod } from '@/shortcuts' // SIGE
 
 import { useCentralStore } from '@/stores/central'
 import { useEditorStore } from '@/stores/editor'
@@ -67,10 +77,30 @@ const LAPTOP_PROPERTIES_MAX_PX = 340
 const LAPTOP_PREVIEW_MIN_PX = 320
 
 /** Laptop and tablet render the palette as a slide-over drawer, not a column. */
-const overlayPalette = computed(() => mode.value === 'laptop' || mode.value === 'tablet')
+const overlayPalette = computed(() => mode.value === 'tablet' || (mode.value === 'laptop' && !sigeLeft.value))
 
 /** The properties panel folds to a slim rail while nothing is selected. */
 const railed = computed(() => mode.value !== 'tablet' && editor.selectedNodeId === null)
+
+/** SIGE: en modo ancho, un solo panel izquierdo (Elementos / Ajustes) estilo Elementor. */
+const sigeLeft = computed(() => mode.value === 'wide' || mode.value === 'laptop')
+const paletteWidthPx = computed(() => (sigeLeft.value ? Math.max(ui.paletteWidth, 340) : ui.paletteWidth))
+
+/** SIGE: ir viendo cómo queda — la vista previa se abre sola (en formato celular la primera vez). */
+watch(() => form.recordId, () => {
+  if (sigeLeft.value) editor.previewVisible = true
+}, { immediate: true, flush: 'post' })
+// SIGE: por defecto «ajustar a ancho de panel» (fill); se pasa una sola vez a fill para quien quedó en celular.
+try {
+  if (localStorage.getItem('sige.preview.init2') === null) {
+    ui.previewPreset = 'fill'
+    localStorage.setItem('sige.preview.init2', '1')
+  }
+} catch { /* sin almacenamiento */ }
+/** SIGE: al seleccionar un área, la vista previa se abre (si estaba cerrada) para mostrarla. */
+watch(() => editor.selectedNodeId, (id) => {
+  if (id !== null && previewSync.value && !editor.previewVisible) editor.previewVisible = true
+})
 
 /**
  * Non-destructive palette auto-tuck (wide mode): when the docked panels
@@ -88,7 +118,7 @@ const fitsWithPalette = computed(() => {
   return viewportWidth.value - ui.paletteWidth - HANDLE_PX - properties - preview >= CANVAS_MIN_PX
 })
 const effectivePaletteVisible = computed(() =>
-  mode.value === 'wide' && ui.paletteVisible && fitsWithPalette.value)
+  (mode.value === 'wide' || mode.value === 'laptop') && (sigeLeft.value || (ui.paletteVisible && fitsWithPalette.value)))
 
 /**
  * Rendered panel widths, clamped so the canvas always keeps its minimum:
@@ -99,12 +129,12 @@ const effectivePaletteVisible = computed(() =>
 const effectivePanelWidths = computed(() => {
   const laptop = mode.value === 'laptop'
   const previewMin = laptop ? LAPTOP_PREVIEW_MIN_PX : PANEL_LIMITS.preview.min
-  let properties = railed.value
+  let properties = sigeLeft.value ? 0 : railed.value
     ? RAIL_PX
     : Math.min(ui.propertiesWidth, laptop ? LAPTOP_PROPERTIES_MAX_PX : Number.MAX_SAFE_INTEGER)
   let preview = editor.previewVisible ? ui.previewWidth : 0
-  const palette = effectivePaletteVisible.value ? ui.paletteWidth + HANDLE_PX : 0
-  const handles = HANDLE_PX * ((railed.value ? 0 : 1) + (editor.previewVisible ? 1 : 0))
+  const palette = effectivePaletteVisible.value ? paletteWidthPx.value + HANDLE_PX : 0
+  const handles = HANDLE_PX * ((sigeLeft.value || railed.value ? 0 : 1) + (editor.previewVisible ? 1 : 0))
   const available = viewportWidth.value - palette - handles - CANVAS_MIN_PX
   let overflow = properties + preview - available
   if (overflow > 0 && editor.previewVisible) {
@@ -127,15 +157,17 @@ const gridColumns = computed(() => {
   const cols: string[] = []
   if (effectivePaletteVisible.value) cols.push('var(--builder-palette-width)', 'var(--builder-split-handle-size)')
   cols.push('minmax(var(--builder-canvas-min-width), 1fr)')
-  cols.push(railed.value ? '0px' : 'var(--builder-split-handle-size)')
-  cols.push(railed.value ? 'var(--builder-properties-rail-width)' : 'var(--builder-properties-width)')
+  if (!sigeLeft.value) {
+    cols.push(railed.value ? '0px' : 'var(--builder-split-handle-size)')
+    cols.push(railed.value ? 'var(--builder-properties-rail-width)' : 'var(--builder-properties-width)')
+  }
   if (editor.previewVisible) cols.push('var(--builder-split-handle-size)', 'var(--builder-preview-width)')
   return cols.join(' ')
 })
 
 const editorBodyStyle = computed(() => ({
   'grid-template-columns': gridColumns.value,
-  '--builder-palette-width': `${ui.paletteWidth}px`,
+  '--builder-palette-width': `${paletteWidthPx.value}px`,
   '--builder-properties-width': `${effectivePanelWidths.value.properties}px`,
   '--builder-preview-width': `${effectivePanelWidths.value.preview}px`,
 }))
@@ -153,6 +185,17 @@ const addFromPalette = (type: string): void => {
     editor.select(id)
     editor.revealNodeId = id
   }
+  if (overlayPalette.value) editor.paletteDrawerOpen = false
+}
+
+/** SigeApp: variante de la paleta por categorías (tipo + preajuste). */
+const addVariantFromPalette = (variant: Variant): void => {
+  const target = selection.insertionTarget()
+  const id = form.addNode(variant.type, target.parentId, target.index)
+  if (id === null) return
+  applyVariantPreset(form.updateNode, id, variant.preset)
+  editor.select(id)
+  editor.revealNodeId = id
   if (overlayPalette.value) editor.paletteDrawerOpen = false
 }
 
@@ -202,6 +245,12 @@ const overlayOpen = (): boolean =>
   document.querySelector('.p-overlay-mask, .p-dialog, .p-popover, .p-drawer, .p-menu, .p-select-overlay, .p-multiselect-overlay') !== null
 
 const onGlobalKeydown = (event: KeyboardEvent): void => {
+  if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'k') {
+    // SIGE: Ctrl+K abre/cierra la lupita de funciones (funciona también con el cursor en un campo).
+    event.preventDefault()
+    toggleCommandPalette()
+    return
+  }
   if (event.key === 'Escape' && editor.paletteDrawerOpen) {
     editor.paletteDrawerOpen = false
     return
@@ -221,6 +270,11 @@ const onGlobalKeydown = (event: KeyboardEvent): void => {
     editor.activeDialog === null && editor.selectedNodeIds.size > 0 && inSelectionScope(event.target)) {
     event.preventDefault()
     selection.deleteSelection()
+  } else if (mod && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'd' && !inInput &&
+    editor.activeDialog === null && editor.selectedNodeIds.size > 0 && inSelectionScope(event.target)) {
+    // SIGE: Ctrl+D duplica la selección (atajo que muestra el menú contextual).
+    event.preventDefault()
+    duplicateSelection(form, editor)
   } else if (mod && event.key.toLowerCase() === 'a' && !inInput && editor.activeDialog === null &&
     inSelectionScope(event.target)) {
     event.preventDefault()
@@ -251,7 +305,9 @@ const onDocumentPaste = (event: ClipboardEvent): void => {
   if (clipboardEventAllowed(event)) selection.handlePasteEvent(event)
 }
 
+let removeVariantDrop: (() => void) | null = null
 onMounted(() => {
+  removeVariantDrop = installVariantDrop(form, editor) // SIGE: arrastrar tarjetas al esquema o a la vista previa
   window.addEventListener('beforeunload', beforeUnload)
   window.addEventListener('keydown', onGlobalKeydown)
   document.addEventListener('copy', onDocumentCopy)
@@ -259,6 +315,7 @@ onMounted(() => {
   document.addEventListener('paste', onDocumentPaste)
 })
 onBeforeUnmount(() => {
+  removeVariantDrop?.()
   window.removeEventListener('beforeunload', beforeUnload)
   window.removeEventListener('keydown', onGlobalKeydown)
   document.removeEventListener('copy', onDocumentCopy)
@@ -310,6 +367,16 @@ const goToCentralSettings = async (): Promise<void> => {
         <span class="form-title" data-testid="editor-form-title">{{ formTitle }}</span>
       </template>
       <template #actions>
+        <!-- SIGE: lupita de funciones (Ctrl+K) -->
+        <Button
+          v-tooltip.bottom="t('sigePalette.openButton', { mod: shortcutMod() })"
+          icon="pi pi-search"
+          severity="secondary"
+          text
+          :aria-label="t('sigePalette.openLabel')"
+          data-testid="command-palette-button"
+          @click="openPalette"
+        />
         <Button
           v-tooltip.bottom="paletteShown ? t('shell.editor.hidePalette') : t('shell.editor.showPalette')"
           icon="pi pi-th-large"
@@ -365,13 +432,14 @@ const goToCentralSettings = async (): Promise<void> => {
         </Transition>
         <Transition name="drawer-start">
           <div v-if="editor.paletteDrawerOpen" class="palette-drawer">
-            <QuestionPalette @add="addFromPalette" />
+            <QuestionPalette @add="addFromPalette" @add-variant="addVariantFromPalette" />
           </div>
         </Transition>
       </template>
 
       <template v-if="effectivePaletteVisible">
-        <QuestionPalette @add="addFromPalette" />
+        <SigeLeftPanel v-if="sigeLeft" @add="addFromPalette" @add-variant="addVariantFromPalette" />
+        <QuestionPalette v-else @add="addFromPalette" @add-variant="addVariantFromPalette" />
         <SplitHandle panel="palette" side="start" />
       </template>
 
@@ -380,6 +448,7 @@ const goToCentralSettings = async (): Promise<void> => {
         class="canvas-panel"
       >
         <CanvasToolbar />
+        <QuestionContextMenu />
         <main
           class="editor-canvas"
           @click="editor.select(null)"
@@ -397,8 +466,8 @@ const goToCentralSettings = async (): Promise<void> => {
       </section>
 
       <template v-if="mode !== 'tablet'">
-        <SplitHandle panel="properties" side="end" :disabled="railed" />
-        <PropertyPanel :railed="railed" />
+        <SplitHandle v-if="!sigeLeft" panel="properties" side="end" :disabled="railed" />
+        <PropertyPanel v-if="!sigeLeft" :railed="railed" />
         <template v-if="editor.previewVisible">
           <SplitHandle panel="preview" side="end" />
           <PreviewPanel />
@@ -415,6 +484,7 @@ const goToCentralSettings = async (): Promise<void> => {
     </div>
 
     <EditorDialogs />
+    <CommandPalette /> <!-- SIGE -->
   </div>
 </template>
 

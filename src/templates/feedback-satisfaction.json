@@ -27,7 +27,11 @@
       "id": "feedback_satisfaction_n2",
       "name": "feedback_date",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -41,7 +45,11 @@
       "id": "feedback_satisfaction_n3",
       "name": "service_used",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",
@@ -70,7 +78,11 @@
       "id": "feedback_satisfaction_n5",
       "name": "overall_satisfaction",
       "bind": {
-        "required": "true()"
+        "required": "true()",
+        "requiredMessage": {
+          "English (en)": "This question is required.",
+          "French (fr)": "Cette question est obligatoire."
+        }
       },
       "body": {},
       "kind": "question",

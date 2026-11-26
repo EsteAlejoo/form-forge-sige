@@ -15,9 +15,13 @@ import { findNode } from '@/core/model/ops'
 import type { FormNode, Lang } from '@/core/model/types'
 import { getQuestionType } from '@/core/registry/question-types'
 import { useAppI18n } from '@/i18n'
+import DefaultPresetField from '@/sige/DefaultPresetField.vue' // SIGE
+import { hasNoDefaultSupport, presetsFor } from '@/sige/defaultPresets' // SIGE
 import { useFormStore } from '@/stores/form'
 
-const props = defineProps<{ node: FormNode }>()
+const props = withDefaults(defineProps<{ node: FormNode, part?: 'all' | 'content' | 'rules' | 'adv' }>(), { part: 'all' })
+/** SIGE: qué campos se muestran en cada pestaña de Ajustes. */
+const show = (p: 'content' | 'rules' | 'adv'): boolean => props.part === 'all' || props.part === p
 
 const { t } = useAppI18n()
 const form = useFormStore()
@@ -57,6 +61,15 @@ const uploadDefaultImage = async (file: File): Promise<void> => {
     if (n !== null && n.kind === 'question') n.defaultValue = storedAs
   })
 }
+
+// SIGE: geo/medios/acknowledge/note no llevan valor inicial (se oculta, salvo que ya traiga uno para no esconderlo).
+// La imagen conserva su selector de plantilla.
+const showDefaultField = computed(() =>
+  props.node.kind !== 'question' ||
+  props.node.type === 'image' ||
+  !hasNoDefaultSupport(props.node.type) ||
+  props.node.defaultValue !== undefined
+)
 
 const nameIssues = computed(() =>
   (form.issuesByNode.get(props.node.id) ?? []).filter((i) => i.code.startsWith('name.'))
@@ -102,7 +115,7 @@ const setReadonly = (value: boolean): void => {
 
 <template>
   <section class="prop-section">
-    <label v-if="showLabel" class="prop-field">
+    <label v-if="showLabel && show('content')" class="prop-field">
       <span>{{ t('properties.basic.label') }}<HelpPopover field="label" /></span>
       <LocalizedInput
         :value="node.label"
@@ -112,7 +125,7 @@ const setReadonly = (value: boolean): void => {
       />
     </label>
 
-    <label class="prop-field">
+    <label v-if="show('adv')" class="prop-field">
       <span>{{ t('properties.basic.name') }}<HelpPopover field="name" /></span>
       <InputText
         :model-value="node.name"
@@ -124,7 +137,7 @@ const setReadonly = (value: boolean): void => {
       <small v-for="(issue, i) in nameIssues" :key="i" class="prop-issue">{{ issue.message }}</small>
     </label>
 
-    <label v-if="showLabel" class="prop-field">
+    <label v-if="showLabel && show('content')" class="prop-field">
       <span>{{ t('properties.basic.hint') }}<HelpPopover field="hint" /></span>
       <LocalizedInput
         :value="node.hint"
@@ -133,7 +146,7 @@ const setReadonly = (value: boolean): void => {
       />
     </label>
 
-    <label v-if="showLabel" class="prop-field">
+    <label v-if="showLabel && show('content')" class="prop-field">
       <span>{{ t('properties.basic.guidanceHint') }}<HelpPopover field="guidanceHint" /></span>
       <LocalizedInput
         :value="node.guidanceHint"
@@ -142,9 +155,9 @@ const setReadonly = (value: boolean): void => {
       />
     </label>
 
-    <LabelMediaSection v-if="showLabel" :node="node" />
+    <LabelMediaSection v-if="showLabel && show('content')" :node="node" />
 
-    <div v-if="node.kind === 'question' && !isMeta" class="prop-field">
+    <div v-if="node.kind === 'question' && !isMeta && show('rules') && showDefaultField" class="prop-field">
       <span>{{ t('properties.basic.defaultValue') }}<HelpPopover :field="isImageDefaultPickable ? 'defaultImage' : 'defaultValue'" /></span>
       <template v-if="isImageDefaultPickable">
         <AttachmentPicker
@@ -158,6 +171,8 @@ const setReadonly = (value: boolean): void => {
         />
         <small class="prop-default-image-hint">{{ t('properties.basic.defaultImageHint') }}</small>
       </template>
+      <!-- SIGE: valor inicial amigable (presets por tipo); el resto de tipos conserva el campo crudo -->
+      <DefaultPresetField v-else-if="node.kind === 'question' && presetsFor(node.type).length > 0" :node="node" />
       <InputText
         v-else
         :model-value="node.defaultValue ?? ''"
@@ -167,7 +182,7 @@ const setReadonly = (value: boolean): void => {
       />
     </div>
 
-    <div v-if="node.kind === 'question' && !isMeta && !isCalculate" class="prop-toggles">
+    <div v-if="node.kind === 'question' && !isMeta && !isCalculate && show('rules')" class="prop-toggles">
       <label class="prop-toggle">
         <ToggleSwitch
           :model-value="node.bind.required !== undefined"

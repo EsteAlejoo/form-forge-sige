@@ -7,6 +7,8 @@ import { makeFetchFormAttachment } from '@/preview/fetchFormAttachment'
 import { normalizeText, resolveRenderedIndex, type FollowTarget, type RenderedQuestion } from '@/preview/followSelection'
 import { warmUpGeolocation } from '@/preview/geolocationWarmup'
 import { loadWebForms } from '@/preview/webFormsLoader'
+import { detectPart, type PartHit } from '@/sige/preview/detectPart' // SIGE
+import { previewZoom } from '@/sige/preview/zoom'
 
 const { t } = useAppI18n()
 
@@ -26,6 +28,11 @@ const emit = defineEmits<{
   /** web-forms finished resolving form state (before the question DOM flushes
    * — see the onLoaded handler below, which waits past the flush). */
   loaded: []
+  /** SIGE: el usuario tocó el celular. `index` = pregunta tocada (null si fue un encabezado de grupo/repetición);
+   * `hit` = qué parte (etiqueta, opción, asterisco…), null si no se reconoció ninguna. */
+  'question-click': [index: number | null, rendered: RenderedQuestion[], hit: PartHit | null]
+  /** SIGE: clic derecho sobre una pregunta del celular. */
+  'question-contextmenu': [index: number, rendered: RenderedQuestion[], event: MouseEvent]
 }>()
 
 const hostEl = ref<HTMLDivElement | null>(null)
@@ -61,20 +68,53 @@ const destroyFailedApp = (app: App, container: HTMLElement): void => {
   if (childApp === app) childApp = null
 }
 
+/** SIGE: versión nueva armada en un contenedor oculto mientras la anterior sigue visible. */
+let pending: { app: App, container: HTMLElement } | null = null
+const discardPending = (): void => {
+  if (pending === null) return
+  try { pending.app.unmount() } catch { /* aún montando */ }
+  pending.container.remove()
+  pending = null
+}
+
 const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   const myGeneration = ++generation
-  loading.value = true
+  // SIGE: doble búfer. Si ya hay un formulario dibujado, el nuevo se arma oculto y se
+  // intercambia al estar listo: sin pantalla de carga, sin vaciar el lienzo y sin que
+  // el desplazamiento salte al inicio.
+  const hadContent = childApp !== null && mountEl.value?.firstElementChild != null
+  loading.value = !hadContent
   void warmUpGeolocation(xml)
   const { OdkWebForm, webFormsPlugin } = await loadWebForms()
   if (myGeneration !== generation || mountEl.value === null) return
 
-  destroyChild()
+  discardPending()
+  const previousApp = childApp
+  const previousContainer = mountEl.value.firstElementChild as HTMLElement | null
+  if (!hadContent) destroyChild()
   const container = document.createElement('div')
+  if (hadContent) container.style.cssText = 'position:absolute;inset-inline:0;top:0;visibility:hidden;pointer-events:none'
   mountEl.value.appendChild(container)
 
   const fetchFormAttachment = makeFetchFormAttachment(props.formRecordId)
   const { createApp } = await import('vue')
-  if (myGeneration !== generation) return
+  if (myGeneration !== generation) { container.remove(); return }
+
+  let swapped = !hadContent
+  const swapIn = (app: App): void => {
+    if (swapped) return
+    swapped = true
+    const top = hostEl.value?.scrollTop ?? 0
+    stopFailureWatch?.()
+    stopFailureWatch = null
+    try { previousApp?.unmount() } catch { /* ya desmontada */ }
+    previousContainer?.remove()
+    container.style.cssText = ''
+    childApp = app
+    pending = null
+    if (hostEl.value !== null) hostEl.value.scrollTop = top
+    watchForLoadFailure(myGeneration, reportError)
+  }
 
   const app = createApp({
     render: () => h(OdkWebForm, {
@@ -90,7 +130,9 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
         void nextTick(() => {
           if (myGeneration !== generation) return
           requestAnimationFrame(() => {
-            if (myGeneration === generation) emit('loaded')
+            if (myGeneration !== generation) return
+            swapIn(app)
+            emit('loaded')
           })
         })
       },
@@ -101,6 +143,7 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   let failed = false
   const reportError = (error: unknown): void => {
     destroyFailedApp(app, container)
+    if (pending !== null && pending.app === app) pending = null
     if (failed || myGeneration !== generation) return
     failed = true
     const message = error instanceof Error ? error.message : String(error)
@@ -112,9 +155,10 @@ const mountXml = async (xml: string, isRevert = false): Promise<void> => {
   try {
     app.mount(container)
     if (!failed) {
-      childApp = app
+      if (hadContent) pending = { app, container }
+      else childApp = app
       if (!isRevert) lastGoodXml = xml
-      watchForLoadFailure(myGeneration, reportError)
+      if (!hadContent) watchForLoadFailure(myGeneration, reportError)
     }
   } catch (error) {
     reportError(error)
@@ -201,6 +245,38 @@ const followQuestion = (target: FollowTarget, opts: { flash: boolean }): boolean
   return true
 }
 
+/** SIGE: clic en el celular → avisar qué pregunta y qué parte. Se escucha en fase de captura: el motor puede
+ * volver a dibujar o detener la propagación al marcar una opción, y el objetivo ya no estaría en el árbol.
+ * No se llama a preventDefault ni stopPropagation: el motor reacciona como siempre. */
+const onMountClick = (event: MouseEvent): void => {
+  if (mountEl.value === null) return
+  const target = event.target as Element | null
+  const hit = detectPart(target, mountEl.value, { clientX: event.clientX })
+  const containers = [...mountEl.value.querySelectorAll<HTMLElement>('.question-container')]
+  const rendered: RenderedQuestion[] = containers.map((el) => ({
+    label: normalizeText(el.querySelector('.control-text label')?.textContent ?? ''),
+    hint: normalizeText(el.querySelector('.control-text .hint')?.textContent ?? ''),
+  }))
+  const question = target?.closest<HTMLElement>('.question-container') ?? null
+  const index = question === null ? -1 : containers.indexOf(question)
+  if (index !== -1) emit('question-click', index, rendered, hit)
+  else if (hit?.panel != null) emit('question-click', null, rendered, hit)
+}
+
+/** SIGE: clic derecho en el celular → menú contextual de esa pregunta. */
+const onMountContextmenu = (event: MouseEvent): void => {
+  if (mountEl.value === null) return
+  const hit = (event.target as HTMLElement | null)?.closest<HTMLElement>('.question-container')
+  if (hit == null) return
+  const containers = [...mountEl.value.querySelectorAll<HTMLElement>('.question-container')]
+  const rendered: RenderedQuestion[] = containers.map((el) => ({
+    label: normalizeText(el.querySelector('.control-text label')?.textContent ?? ''),
+    hint: normalizeText(el.querySelector('.control-text .hint')?.textContent ?? ''),
+  }))
+  const index = containers.indexOf(hit)
+  if (index !== -1) emit('question-contextmenu', index, rendered, event)
+}
+
 defineExpose({ followQuestion })
 </script>
 
@@ -216,7 +292,7 @@ defineExpose({ followQuestion })
       <ProgressSpinner style="width: 36px; height: 36px" />
       <span>{{ t('preview.host.loadingEngine') }}</span>
     </div>
-    <div ref="mountEl" class="preview-mount" />
+    <div ref="mountEl" class="preview-mount" :style="{ zoom: previewZoom }" @click.capture="onMountClick" @contextmenu="onMountContextmenu" />
   </div>
 </template>
 
