@@ -1,6 +1,11 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 import { addQuestion, createForm } from './helpers'
+
+const pickPreset = async (page: Page, preset: string): Promise<void> => {
+  await page.getByTestId('preview-width-menu').click()
+  await page.getByTestId(`preview-preset-${preset}`).click()
+}
 
 test.describe('preview presets and error containment', () => {
   test('device presets set the preview content width and persist', async ({ page }) => {
@@ -11,16 +16,16 @@ test.describe('preview presets and error containment', () => {
     await page.getByTestId('preview-button').click()
     await expect(page.locator('.preview-mount')).toBeVisible({ timeout: 15000 })
 
-    await page.getByTestId('preview-preset-phone').click()
+    await pickPreset(page, 'phone')
     const phone = await page.locator('.preview-mount').boundingBox()
     expect(Math.round(phone!.width)).toBe(360)
 
-    await page.getByTestId('preview-preset-fill').click()
+    await pickPreset(page, 'fill')
     const fill = await page.locator('.preview-mount').boundingBox()
     expect(fill!.width).toBeGreaterThan(380)
 
     // The preset is a device-level preference: it survives a reload.
-    await page.getByTestId('preview-preset-phone').click()
+    await pickPreset(page, 'phone')
     await expect(page.getByTestId('save-indicator')).toContainText('All changes saved')
     await page.reload()
     await page.getByTestId('preview-button').click()

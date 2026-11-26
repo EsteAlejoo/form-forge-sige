@@ -16,8 +16,11 @@ import {
   addRelative,
   addableTypes,
   changeNodeType,
+  canPasteStyle,
   compatibleTypes,
+  copyStyle,
   duplicateSelection,
+  pasteStyle,
   moveSelection,
   selectForMenu,
   siblingPosition,
@@ -82,7 +85,10 @@ const build = (nodeId: string): MenuItem[] => {
     { separator: true },
     { key: 'copy', label: t('sigeMenu.copy'), icon: 'pi pi-copy', shortcut: `${mod}+C`, disabled: !selection.canCopy.value, command: selection.copySelection },
     { key: 'cut', label: t('sigeMenu.cut'), icon: 'pi pi-file-export', shortcut: `${mod}+X`, disabled: !selection.canCut.value, command: selection.cutSelection },
-    { key: 'paste', label: t('sigeMenu.paste'), icon: 'pi pi-file-import', shortcut: `${mod}+V`, disabled: !selection.canPaste.value, command: selection.pasteClipboard }
+    { key: 'paste', label: t('sigeMenu.paste'), icon: 'pi pi-file-import', shortcut: `${mod}+V`, disabled: !selection.canPaste.value, command: selection.pasteClipboard },
+    { separator: true },
+    { key: 'copy-style', label: t('sigeMenu.copyStyle'), icon: 'pi pi-palette', command: () => { copyStyle(form, nodeId) } },
+    { key: 'paste-style', label: t('sigeMenu.pasteStyle'), icon: 'pi pi-brush', disabled: !canPasteStyle(form, editor), command: () => { pasteStyle(form, editor) } }
   )
   return out
 }

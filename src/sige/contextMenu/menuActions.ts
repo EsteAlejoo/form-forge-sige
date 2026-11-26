@@ -1,5 +1,7 @@
 import { findNode, locateNode, topMostNodes } from '@/core/model/ops'
-import type { FormDocument, QuestionNode } from '@/core/model/types'
+import { ref } from 'vue'
+
+import type { FormDocument, FormNode, QuestionNode } from '@/core/model/types'
 import { getAllQuestionTypes, getQuestionType, type QuestionTypeDefinition } from '@/core/registry/question-types'
 import { translate } from '@/i18n'
 import type { useEditorStore } from '@/stores/editor'
@@ -102,6 +104,58 @@ export const compatibleTypes = (node: QuestionNode): QuestionTypeDefinition[] =>
     d.requiresFile !== true &&
     (d.requiresChoices === true) === (current.requiresChoices === true) &&
     typeof d.xform.bodyElement === 'string')
+}
+
+/**
+ * Copiar / pegar estilo (idea de Elementor «Copy/Paste Style»): lo que se copia es la
+ * apariencia (`body.appearance`, p. ej. columns-pack, minimal, multiline). Al pegar, cada
+ * destino conserva solo las partes que su tipo admite (como al cambiar de tipo); un
+ * contenedor solo recibe el estilo de otro contenedor. Una sola entrada de deshacer.
+ */
+export interface CopiedStyle { kind: FormNode['kind'], appearance: string }
+export const copiedStyle = ref<CopiedStyle | null>(null)
+
+export const copyStyle = (form: FormStore, nodeId: string): void => {
+  const node = form.getNode(nodeId)
+  if (node === null) return
+  copiedStyle.value = { kind: node.kind, appearance: node.body.appearance ?? '' }
+}
+
+const adaptAppearance = (target: FormNode, src: CopiedStyle): string | undefined | null => {
+  if (target.kind !== src.kind && (target.kind !== 'question' || src.kind !== 'question')) {
+    // contenedor ↔ pregunta: el estilo no es transferible
+    if (target.kind === 'question' || src.kind === 'question') return null
+  }
+  const tokens = src.appearance.split(/\s+/).filter((tok) => tok !== '')
+  if (target.kind !== 'question') return tokens.length > 0 ? tokens.join(' ') : undefined
+  const names = (getQuestionType(target.type)?.appearances ?? []).map((a) => a.name)
+  const kept = tokens.filter((tok) => names.some((n) => tok.startsWith(n)))
+  return kept.length > 0 ? kept.join(' ') : undefined
+}
+
+/** ¿Hay estilo copiado que se pueda pegar en algún nodo de la selección? */
+export const canPasteStyle = (form: FormStore, editor: EditorStore): boolean => {
+  const src = copiedStyle.value
+  if (src === null) return false
+  return [...editor.selectedNodeIds].some((id) => {
+    const n = form.getNode(id)
+    return n !== null && adaptAppearance(n, src) !== null
+  })
+}
+
+export const pasteStyle = (form: FormStore, editor: EditorStore): void => {
+  const src = copiedStyle.value
+  if (src === null || editor.selectedNodeIds.size === 0) return
+  const ids = [...editor.selectedNodeIds]
+  form.mutate(translate('sigeMenu.undoPasteStyle'), (d) => {
+    for (const id of ids) {
+      const node = findNode(d, id)
+      if (node === null) continue
+      const next = adaptAppearance(node, src)
+      if (next === null) continue
+      node.body.appearance = next
+    }
+  })
 }
 
 /** Cambia el tipo en una sola entrada de deshacer; limpia apariencia/parámetros que el tipo nuevo no admite. */

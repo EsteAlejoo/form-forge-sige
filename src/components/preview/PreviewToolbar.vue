@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
+import Menu from 'primevue/menu'
+import { computed, ref } from 'vue'
 
 import { previewMode, setPreviewMode } from '@/sige/preview/mode' // SIGE
 import { previewSync, togglePreviewSync } from '@/sige/preview/sync'
@@ -32,6 +34,16 @@ const selectPreset = (preset: PreviewPreset): void => {
   const contentPx = PREVIEW_PRESET_WIDTHS[preset]
   ui.setPanelWidth('preview', Math.max(ui.previewWidth, contentPx + 40))
 }
+
+const widthMenu = ref<InstanceType<typeof Menu> | null>(null)
+const currentPreset = computed(() => PRESETS.find((p) => p.preset === ui.previewPreset) ?? PRESETS[2])
+const widthItems = computed(() => PRESETS.map((p) => ({
+  key: p.preset,
+  label: p.tooltip,
+  icon: p.icon,
+  class: ui.previewPreset === p.preset ? 'sige-width-active' : '',
+  command: () => { selectPreset(p.preset) },
+})))
 
 const openFullPreview = (): void => {
   if (form.recordId !== null) {
@@ -81,37 +93,42 @@ const openFullPreview = (): void => {
       </span>
       <!-- SIGE: sincronizar constructor ↔ vista previa en los dos sentidos -->
       <button
+        v-tooltip.bottom="t('sigePreview.sync')"
         type="button"
         class="preset-button sige-sync"
         :class="{ active: previewSync }"
         :aria-pressed="previewSync"
-        :title="previewSync ? t('sigePreview.syncOnHint') : t('sigePreview.syncOffHint')"
+        :aria-label="t('sigePreview.sync')"
         data-testid="sige-preview-sync"
         @click="togglePreviewSync()"
       >
-        <i class="pi pi-arrow-right-arrow-left" /> {{ t('sigePreview.sync') }}
+        <i class="pi pi-arrow-right-arrow-left" />
       </button>
       <span class="sige-zoom" role="group" aria-label="Tamaño del texto" data-testid="sige-zoom">
         <button type="button" class="preset-button" title="Texto más pequeño" aria-label="Texto más pequeño" data-testid="sige-zoom-out" @click="stepPreviewZoom(-1)">A−</button>
         <button type="button" class="sige-zoom-pct" title="Restablecer tamaño" aria-label="Restablecer tamaño del texto" data-testid="sige-zoom-reset" @click="resetPreviewZoom()">{{ previewZoomPercent }}%</button>
         <button type="button" class="preset-button" title="Texto más grande" aria-label="Texto más grande" data-testid="sige-zoom-in" @click="stepPreviewZoom(1)">A+</button>
       </span>
-      <span class="preset-group" role="group" :aria-label="t('preview.toolbar.widthPresetGroup')">
-        <button
-          v-for="p in PRESETS"
-          :key="p.preset"
-          v-tooltip.bottom="p.tooltip"
-          type="button"
-          class="preset-button"
-          :class="{ active: ui.previewPreset === p.preset }"
-          :aria-pressed="ui.previewPreset === p.preset"
-          :aria-label="p.tooltip"
-          :data-testid="`preview-preset-${p.preset}`"
-          @click="selectPreset(p.preset)"
-        >
-          <i :class="p.icon" />
-        </button>
-      </span>
+      <!-- SIGE: ancho de la vista previa como desplegable (ahorra espacio) -->
+      <button
+        v-tooltip.bottom="t('sigePreview.widthMenu')"
+        type="button"
+        class="preset-button sige-width"
+        :aria-label="t('sigePreview.widthMenu')"
+        aria-haspopup="true"
+        data-testid="preview-width-menu"
+        @click="(e) => widthMenu?.toggle(e)"
+      >
+        <i :class="currentPreset.icon" /><i class="pi pi-angle-down sige-caret" />
+      </button>
+      <Menu ref="widthMenu" :model="widthItems" popup>
+        <template #item="{ item, props }">
+          <a v-bind="props.action" :data-testid="`preview-preset-${item.key}`">
+            <span :class="item.icon" />
+            <span class="p-menu-item-label">{{ item.label }}</span>
+          </a>
+        </template>
+      </Menu>
       <Button
         v-tooltip.bottom="t('preview.toolbar.openFullPage')"
         icon="pi pi-window-maximize"
@@ -137,7 +154,9 @@ const openFullPreview = (): void => {
 <style scoped>
 .sige-mode { margin-inline-end: var(--odk-spacing-s); }
 .sige-mode .sige-mode-btn { white-space: nowrap; width: auto; padding: 0 8px; gap: 4px; font-size: 0.72rem; font-weight: 600; }
-.sige-sync { width: auto; padding: 0 8px; gap: 4px; white-space: nowrap; font-weight: 600; font-size: 0.72rem; border: 1px solid var(--odk-border-color); border-radius: var(--odk-radius); margin-inline-end: var(--odk-spacing-s); }
+.sige-width { width: auto; padding: 0 6px; gap: 2px; border: 1px solid var(--odk-border-color); border-radius: var(--odk-radius); }
+.sige-caret { font-size: 0.6rem; }
+.sige-sync { width: 30px; border: 1px solid var(--odk-border-color); border-radius: var(--odk-radius); margin-inline-end: var(--odk-spacing-s); }
 .sige-zoom { display: inline-flex; align-items: center; gap: 2px; margin-inline-end: var(--odk-spacing-s); }
 .sige-zoom .preset-button { font-size: 0.72rem; font-weight: 600; min-width: 28px; }
 .sige-zoom-pct { border: none; background: none; color: var(--odk-muted-text-color); font-family: inherit; font-size: 0.7rem; cursor: pointer; padding: 0 2px; }

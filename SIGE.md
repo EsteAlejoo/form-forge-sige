@@ -61,6 +61,7 @@ Regla (2026-11-21): basarse en open source y anotar aquí TODO lo tomado: códig
 | Documentación ODK (form-datasets) | CC BY 4.0 | Patrón `instance('lista')/root/item[...]` para «Traer columna» | src/sige/relaciones/lookupExpression.ts |
 | Investigación de tablas (AppSheet, Airtable, HoPF, ptype-cat) | solo ideas | Llave = única y sin vacíos; conversión guiada con vista previa | src/sige/relaciones/ |
 | Elementor (idea) | GPL-3.0 | Patrón «clic en el lienzo abre su panel», solo idea | src/sige/preview/ |
+| Elementor (idea) | GPL-3.0 | «Copy/Paste Style»: copiar la apariencia y pegarla en otros elementos, solo idea | src/sige/contextMenu/menuActions.ts |
 Pendiente: al construir una función inspirada en un proyecto concreto, agregar su fila aquí en el mismo commit.
 
 ## Estado de construcción (2026-11-21)
@@ -73,3 +74,6 @@ Vista previa: por defecto «ajustar a ancho de panel» (preset fill; migración 
 
 ## Decisión 2026-11-25 (2)
 Botón «Sincronizar» en la barra de la vista previa (src/sige/preview/sync.ts, localStorage sige.preview.sync, por defecto encendido): gobierna los dos sentidos (seleccionar en el constructor → desplaza la vista previa y la abre; tocar la vista previa → selecciona). Formulario Kobo (C:\sigeapp\kobo\build_xlsform.py): en observaciones cuantificables las casillas dicen «Escala 0..4» (sin «NA»); aviso de suma ≠ 10 reescrito («Contaste X estructuras…»). `${campo}` literal en la vista previa del constructor es normal: no calcula; en Kobo sí.
+
+## Decisión 2026-11-26
+Barra de la vista previa: «Sincronizar» es solo icono (texto «Sincronizar paneles» en hover); el ancho (celular/tablet/panel) es un desplegable (testids preview-width-menu y preview-preset-<x>; e2e actualizado). Menú contextual: «Copiar estilo / Pegar estilo» = copia body.appearance; el destino conserva solo lo que su tipo admite; contenedor↔pregunta no se transfiere. Sin prueba unitaria aún (adaptAppearance no exportada).
